@@ -10,6 +10,21 @@
     <header class="px-4 py-3 border-b bg-white">
       <div class="max-w-5xl mx-auto flex items-center justify-between">
         <a href="/" class="font-semibold">{{ config('app.name','Memorial') }}</a>
+        <nav class="flex items-center gap-4 text-sm">
+          <a href="{{ route('home') }}" class="hover:underline">Home</a>
+          <a href="{{ route('gallery.index') }}" class="hover:underline">Gallery</a>
+          <a href="{{ route('wishes.index') }}" class="hover:underline">Wishes</a>
+          <a href="{{ route('updates.index') }}" class="hover:underline">Updates</a>
+          @auth
+            <a href="{{ route('admin.dashboard') }}" class="hover:underline">Admin</a>
+            <form method="POST" action="{{ route('logout') }}" class="inline">
+              @csrf
+              <button class="hover:underline">Logout</button>
+            </form>
+          @else
+            <a href="{{ route('login') }}" class="hover:underline">Login</a>
+          @endauth
+        </nav>
       </div>
     </header>
     <main class="max-w-5xl mx-auto p-4">

@@ -8,7 +8,6 @@ export default {
         './resources/**/*.blade.php',
         './resources/**/*.js',
         './resources/**/*.vue',
-        './node_modules/preline/dist/*.js',
     ],
     theme: {
         extend: {
@@ -18,4 +17,16 @@ export default {
         },
     },
     plugins: [],
+    corePlugins: {
+        // Disable unused features to reduce bundle size
+        float: false,
+        objectFit: false,
+        objectPosition: false,
+        clear: false,
+        skew: false,
+        caretColor: false,
+        sepia: false,
+        filter: false,
+        backdropFilter: false,
+    },
 };

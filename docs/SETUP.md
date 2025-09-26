@@ -20,11 +20,14 @@ Run the bootstrap script (Windows)
   - Install Tailwind + Preline and build assets
   - Add a base Blade layout with HTMX, Alpine, GLightbox CDNs
   - Install `intervention/image` and `spatie/image-optimizer`
+  - NOTE: Set `ADMIN_TOKEN` in `app/.env` to enable admin routes
+  - Link public storage: `cd app && php artisan storage:link`
 
 Run the bootstrap script (macOS/Linux)
 - From the repo root and with PHP/Composer/Node installed:
   - `bash scripts/unix/setup-stage1.sh`
 - Same outputs as Windows flow; use Homebrew or your distro package manager to install prerequisites.
+ - Link public storage: `cd app && php artisan storage:link`
 
 Dev servers
 - Terminal A: `cd app && php artisan serve`
@@ -37,3 +40,12 @@ Commit conventions
 Troubleshooting
 - If a command is not found after winget installs, restart PowerShell.
 - If `spatie/image-optimizer` warns about missing binaries, that’s OK for now; they’re used in later stages (you can add jpegoptim/pngquant/etc. later on the server).
+- For admin moderation views, set an env var in `app/.env` like `ADMIN_TOKEN=your-long-secret` and pass it via `X-Admin-Token` header or `?token=...` in the URL.
+ - To seed an admin login account, set in `app/.env` before `php artisan migrate --seed`:
+   - `ADMIN_EMAIL=admin@example.com`
+   - `ADMIN_PASSWORD=your-strong-password`
+   The seeder marks this user as `is_admin=1`. Admin routes require both login and admin flag.
+
+Frontend quality goals
+- Build for production: `cd app && npm run build`. The generated CSS in `public/build/assets/*.css` should be under 20 KB thanks to Tailwind’s content-based tree-shaking.
+- Run Lighthouse in Chrome on `/` and `/wishes` and `/updates`; aim for ≥ 90 in all categories. If needed, minimize images and disable heavy fonts.

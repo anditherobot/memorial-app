@@ -38,17 +38,17 @@ Push-Location $AppDir
 
 # 2) SQLite env
 if (-not (Test-Path ".env")) { Copy-Item ".env.example" ".env" }
+$dbPath = Join-Path (Resolve-Path .) "database\database.sqlite"
+$dbRel = 'database/database.sqlite'
 (Get-Content .env) `
   -replace '^APP_NAME=.*', 'APP_NAME="Memorial"' `
   -replace '^DB_CONNECTION=.*', 'DB_CONNECTION=sqlite' `
   -replace '^DB_HOST=.*', '# DB_HOST=127.0.0.1' `
   -replace '^DB_PORT=.*', '# DB_PORT=3306' `
-  -replace '^DB_DATABASE=.*', 'DB_DATABASE=' `
+  -replace '^DB_DATABASE=.*', "DB_DATABASE=$dbRel" `
   -replace '^DB_USERNAME=.*', '# DB_USERNAME=' `
   -replace '^DB_PASSWORD=.*', '# DB_PASSWORD=' `
   | Set-Content .env
-
-$dbPath = Join-Path (Resolve-Path .) "database\database.sqlite"
 New-Item -ItemType Directory -Force -Path (Split-Path $dbPath) | Out-Null
 if (-not (Test-Path $dbPath)) { New-Item -ItemType File -Path $dbPath | Out-Null }
 

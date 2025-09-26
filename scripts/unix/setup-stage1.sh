@@ -34,7 +34,7 @@ sed -i.bak \
   -e 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' \
   -e 's/^DB_HOST=.*/# DB_HOST=127.0.0.1/' \
   -e 's/^DB_PORT=.*/# DB_PORT=3306/' \
-  -e 's/^DB_DATABASE=.*/DB_DATABASE=/' \
+  -e 's#^DB_DATABASE=.*#DB_DATABASE=database/database.sqlite#' \
   -e 's/^DB_USERNAME=.*/# DB_USERNAME=/' \
   -e 's/^DB_PASSWORD=.*/# DB_PASSWORD=/' .env
 rm -f .env.bak || true
@@ -121,4 +121,3 @@ echo "=== Setup complete ==="
 echo "Laravel app in '$APP_DIR'. Start dev with:"
 echo "  cd $APP_DIR; php artisan serve"
 echo "  cd $APP_DIR; npm run dev"
-

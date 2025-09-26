@@ -12,27 +12,27 @@ Legend: `todo`, `in_progress`, `done`, `blocked`
 | Setup | SETUP-04 | done | task: SETUP-04 | Install intervention/image, spatie/image-optimizer |
 | Setup | SETUP-05 | done | task: SETUP-05 | Base layout with HTMX, Alpine, GLightbox CDNs |
 | Setup | SETUP-06 | done | task: SETUP-06 | Git init + .gitignore |
-| Data | DATA-01 | todo |  | media + media_derivatives |
+| Data | DATA-01 | in_progress |  | media + media_derivatives |
 | Data | DATA-02 | todo |  | wishes + attachments |
 | Data | DATA-03 | todo |  | posts + attachments |
 | Data | DATA-04 | todo |  | SQLite PRAGMA migration (WAL + FK) |
-| Backend | BE-01 | todo |  | UploadController (image/video) |
-| Backend | BE-02 | todo |  | Jobs: ProcessImage, GeneratePoster |
-| Backend | BE-03 | todo |  | WishController (captcha, spam controls) |
-| Backend | BE-04 | todo |  | PostController (auth posts, pagination) |
-| Backend | BE-05 | todo |  | Moderation routes (/admin) |
-| Backend | BE-06 | todo |  | Rate limiting |
-| Frontend | FE-01 | todo |  | Layout (header, footer) |
-| Frontend | FE-02 | todo |  | Home + Bio |
-| Frontend | FE-03 | todo |  | Gallery (GLightbox) |
-| Frontend | FE-04 | todo |  | Wishwall (htmx form + list) |
-| Frontend | FE-05 | todo |  | Updates (htmx load more) |
-| Frontend | FE-06 | todo |  | Responsive + <20 KB CSS |
-| Testing & CI | TEST-01 | todo |  | Feature test Wishwall (captcha mocked) |
-| Testing & CI | TEST-02 | todo |  | Feature test Updates |
-| Testing & CI | TEST-03 | todo |  | Unit test ProcessImage |
-| Testing & CI | TEST-04 | todo |  | Browser test (optional) |
-| Testing & CI | TEST-05 | todo |  | GitHub Actions (pint, phpunit, npm build) |
+| Backend | BE-01 | done |  | UploadController (image/video) |
+| Backend | BE-02 | done |  | Jobs: ProcessImage, GeneratePoster |
+| Backend | BE-03 | done |  | WishController (captcha, spam controls) |
+| Backend | BE-04 | done |  | PostController (auth posts, pagination) |
+| Backend | BE-05 | done |  | Moderation routes (/admin) + login |
+| Backend | BE-06 | done |  | Rate limiting |
+| Frontend | FE-01 | done |  | Layout (header, footer) |
+| Frontend | FE-02 | done |  | Home + Bio |
+| Frontend | FE-03 | done |  | Gallery (GLightbox) |
+| Frontend | FE-04 | done |  | Wishwall (htmx form + list) |
+| Frontend | FE-05 | done |  | Updates (htmx load more) |
+| Frontend | FE-06 | done |  | Responsive + <20 KB CSS |
+| Testing & CI | TEST-01 | done | task: TEST-01 | Feature test Wishwall (captcha mocked) |
+| Testing & CI | TEST-02 | done | task: TEST-02 | Feature test Updates |
+| Testing & CI | TEST-03 | done | task: TEST-03 | Unit test ProcessImage |
+| Testing & CI | TEST-04 | done | task: TEST-04 | Browser test (optional) |
+| Testing & CI | TEST-05 | done | task: TEST-05 | GitHub Actions (pint, phpunit, npm build) |
 | Deployment & Ops | OPS-01 | todo |  | Server prep doc |
 | Deployment & Ops | OPS-02 | todo |  | Nginx vhost config |
 | Deployment & Ops | OPS-03 | todo |  | Queue worker systemd |
