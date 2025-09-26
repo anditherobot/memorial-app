@@ -1,0 +1,53 @@
+# Memorial Website Queue Worker Service
+# Place this file at: /etc/systemd/system/memorial-worker.service
+# Enable with: sudo systemctl enable memorial-worker
+
+[Unit]
+Description=Memorial Website Queue Worker
+After=network.target
+Requires=network.target
+
+[Service]
+Type=simple
+User=memorial
+Group=www-data
+Restart=always
+RestartSec=5
+StartLimitInterval=60s
+StartLimitBurst=3
+
+# Working directory
+WorkingDirectory=/home/memorial/app
+
+# Environment
+Environment=HOME=/home/memorial
+Environment=USER=memorial
+
+# Command
+ExecStart=/usr/bin/php artisan queue:work --daemon --sleep=3 --tries=3 --max-time=3600 --memory=512
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=memorial-worker
+
+# Security settings
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/home/memorial/app/storage
+ReadWritePaths=/home/memorial/app/database
+ReadWritePaths=/tmp
+
+# Resource limits
+MemoryLimit=1G
+TasksMax=50
+
+# Process management
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

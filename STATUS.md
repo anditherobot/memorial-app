@@ -33,12 +33,12 @@ Legend: `todo`, `in_progress`, `done`, `blocked`
 | Testing & CI | TEST-03 | done | task: TEST-03 | Unit test ProcessImage |
 | Testing & CI | TEST-04 | done | task: TEST-04 | Browser test (optional) |
 | Testing & CI | TEST-05 | done | task: TEST-05 | GitHub Actions (pint, phpunit, npm build) |
-| Deployment & Ops | OPS-01 | todo |  | Server prep doc |
-| Deployment & Ops | OPS-02 | todo |  | Nginx vhost config |
-| Deployment & Ops | OPS-03 | todo |  | Queue worker systemd |
-| Deployment & Ops | OPS-04 | todo |  | Backup script (sqlite3 .backup + rclone) |
-| Deployment & Ops | OPS-05 | todo |  | Restore doc |
-| Deployment & Ops | OPS-06 | todo |  | Cron jobs (scheduler, nightly backups) |
+| Deployment & Ops | OPS-01 | done | task: OPS-01 | Server prep doc |
+| Deployment & Ops | OPS-02 | done | task: OPS-02 | Nginx vhost config |
+| Deployment & Ops | OPS-03 | done | task: OPS-03 | Queue worker systemd |
+| Deployment & Ops | OPS-04 | done | task: OPS-04 | Backup script (sqlite3 .backup + rclone) |
+| Deployment & Ops | OPS-05 | done | task: OPS-05 | Restore doc |
+| Deployment & Ops | OPS-06 | done | task: OPS-06 | Cron jobs (scheduler, nightly backups) |
 
 Checkpoint tags (use exactly):
 - setup: `checkpoint: project setup complete`

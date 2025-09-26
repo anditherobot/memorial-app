@@ -41,10 +41,11 @@ Troubleshooting
 - If a command is not found after winget installs, restart PowerShell.
 - If `spatie/image-optimizer` warns about missing binaries, that’s OK for now; they’re used in later stages (you can add jpegoptim/pngquant/etc. later on the server).
 - For admin moderation views, set an env var in `app/.env` like `ADMIN_TOKEN=your-long-secret` and pass it via `X-Admin-Token` header or `?token=...` in the URL.
- - To seed an admin login account, set in `app/.env` before `php artisan migrate --seed`:
-   - `ADMIN_EMAIL=admin@example.com`
-   - `ADMIN_PASSWORD=your-strong-password`
-   The seeder marks this user as `is_admin=1`. Admin routes require both login and admin flag.
+- To seed an admin login account, set in `app/.env` before `php artisan migrate --seed`:
+  - `ADMIN_EMAIL=admin@example.com`
+  - `ADMIN_PASSWORD=your-strong-password`
+  The seeder marks this user as `is_admin=1`. Admin routes require both login and admin flag.
+ - SQLite “database is locked” during requests: prefer file sessions in dev. In `app/.env` set `SESSION_DRIVER=file`, then `php artisan config:clear`. We also set `PRAGMA busy_timeout=5000` at boot to reduce contention.
 
 Frontend quality goals
 - Build for production: `cd app && npm run build`. The generated CSS in `public/build/assets/*.css` should be under 20 KB thanks to Tailwind’s content-based tree-shaking.
