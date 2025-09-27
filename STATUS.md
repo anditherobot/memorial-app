@@ -46,6 +46,7 @@ Legend: `todo`, `in_progress`, `done`, `blocked`
 | Deployment & Ops | OPS-06 | done | task: OPS-06 | Cron jobs (scheduler, nightly backups) |
 
 | Maintenance | REPO-01 | done | task: REPO-01 | Consolidate Laravel app under `app/`; moved images + sessions migration; removed duplicate root `routes/` and `resources/` |
+| Docs | DOC-01 | done | task: DOC-01 | Root context package `CONTEXT_PACKAGE.md` |
 
 Checkpoint tags (use exactly):
 - setup: `checkpoint: project setup complete`
