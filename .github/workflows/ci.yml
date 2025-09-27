@@ -35,36 +35,30 @@ jobs:
       with:
         node-version: '20'
         cache: 'npm'
-        cache-dependency-path: 'app/package-lock.json'
+        cache-dependency-path: 'package-lock.json'
 
     - name: Copy .env
       run: |
-        cd app
         php -r "file_exists('.env') || copy('.env.example', '.env');"
 
     - name: Install PHP Dependencies
       run: |
-        cd app
         composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
     - name: Install Node Dependencies
       run: |
-        cd app
-        npm ci
+        npm install --no-audit --no-fund
 
     - name: Generate key
       run: |
-        cd app
         php artisan key:generate
 
     - name: Directory Permissions
       run: |
-        cd app
         chmod -R 755 storage bootstrap/cache
 
     - name: Create Database
       run: |
-        cd app
         mkdir -p database
         touch database/database.sqlite
 
@@ -74,22 +68,18 @@ jobs:
         DB_DATABASE: database/database.sqlite
         ADMIN_TOKEN: test_admin_token
       run: |
-        cd app
         php artisan test
 
     - name: Laravel Pint (Code Style)
       run: |
-        cd app
         ./vendor/bin/pint --test
 
     - name: Build Assets
       run: |
-        cd app
         npm run build
 
     - name: Check CSS Bundle Size
       run: |
-        cd app
         CSS_SIZE=$(stat -c%s "public/build/assets/app-*.css" 2>/dev/null | head -1 || echo "0")
         CSS_SIZE_KB=$((CSS_SIZE / 1024))
         echo "CSS bundle size: ${CSS_SIZE_KB} KB"
@@ -115,12 +105,10 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        cd app
         composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
     - name: Security Audit
       run: |
-        cd app
         composer audit
 
   static-analysis:
@@ -138,12 +126,10 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        cd app
         composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
     - name: PHPStan Static Analysis
       run: |
-        cd app
         if [ -f "vendor/bin/phpstan" ]; then
           ./vendor/bin/phpstan analyse --memory-limit=2G
         else

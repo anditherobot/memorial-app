@@ -1,4 +1,6 @@
-# Root ignores (repo-level)
+/.phpunit.cache
+/.phpunit.result.cache
+/.phpactor.json
 
 # Node
 node_modules/
@@ -15,20 +17,23 @@ Thumbs.db
 *.log
 logs/
 
-# Laravel app subdir ignores
-app/vendor/
-app/node_modules/
-app/public/build/
-app/public/hot
-app/storage/
-app/.env
-app/.env.*
-app/.phpunit.result.cache
-app/phpunit.xml
-app/composer.lock
-app/homestead.json
-app/Homestead.yaml
-app/nova-components/**/node_modules/
-app/vendor-bin/**/vendor/
-app/vendor-bin/**/composer.lock
-app/.idea/
+# Laravel
+/.env
+/.env.*
+/vendor
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+phpunit.xml
+Homestead.json
+Homestead.yaml
+
+# IDE/editor
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
+auth.json

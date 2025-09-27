@@ -15,9 +15,8 @@ Key files
 - `docs/SETUP.md` — Stage 1 instructions + scripts.
 
 Dev servers (after Stage 1)
-- Terminal A: `cd app && php artisan serve`
-- Terminal B: `cd app && npm run dev`
+- Terminal A: `php artisan serve`
+- Terminal B: `npm run dev`
 
 Checkpoints
 - Stage completion messages must include exact tags, e.g., `checkpoint: project setup complete`.
-

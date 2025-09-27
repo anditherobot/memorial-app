@@ -1,6 +1,6 @@
 #Requires -Version 5.1
 param(
-  [string]$AppDir = "app",
+  [string]$AppDir = ".",
   [switch]$SkipInstall
 )
 
@@ -27,11 +27,11 @@ Ensure-Command node "OpenJS.NodeJS.LTS"
 Ensure-Command npm "OpenJS.NodeJS.LTS"
 
 # 1) Scaffold Laravel 11
-if (-not (Test-Path $AppDir)) {
+if (-not (Test-Path (Join-Path $AppDir 'composer.json'))) {
   Write-Host "Creating Laravel 11 app in '$AppDir'..." -ForegroundColor Cyan
   composer create-project laravel/laravel:^11 $AppDir
 } else {
-  Write-Host "Laravel app directory '$AppDir' already exists. Skipping create-project." -ForegroundColor Yellow
+  Write-Host "Laravel app already present in '$AppDir' (composer.json found). Skipping create-project." -ForegroundColor Yellow
 }
 
 Push-Location $AppDir
@@ -128,9 +128,9 @@ npm run build
 Pop-Location
 
 Write-Host "=== Setup complete ===" -ForegroundColor Green
-Write-Host "Laravel app in '$AppDir'. Start dev with:" -ForegroundColor Green
-Write-Host "  cd $AppDir; php artisan serve" -ForegroundColor Yellow
-Write-Host "  cd $AppDir; npm run dev" -ForegroundColor Yellow
+Write-Host "Start dev with:" -ForegroundColor Green
+Write-Host "  php artisan serve" -ForegroundColor Yellow
+Write-Host "  npm run dev" -ForegroundColor Yellow
 
 # 7) Initialize git repository (optional)
 try {

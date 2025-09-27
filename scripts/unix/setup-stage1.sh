@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-APP_DIR=${1:-app}
+APP_DIR=${1:-.}
 
 echo "=== Stage 1: Setup Agent (Unix) ==="
 
@@ -18,11 +18,11 @@ need composer
 need node
 need npm
 
-if [ ! -d "$APP_DIR" ]; then
+if [ ! -f "$APP_DIR/composer.json" ]; then
   echo "Creating Laravel 11 app in '$APP_DIR'..."
   composer create-project laravel/laravel:^11 "$APP_DIR"
 else
-  echo "Laravel app directory '$APP_DIR' already exists. Skipping create-project."
+  echo "Laravel app already present in '$APP_DIR' (composer.json found). Skipping create-project."
 fi
 
 pushd "$APP_DIR" >/dev/null
@@ -118,6 +118,6 @@ npm run build
 popd >/dev/null
 
 echo "=== Setup complete ==="
-echo "Laravel app in '$APP_DIR'. Start dev with:"
-echo "  cd $APP_DIR; php artisan serve"
-echo "  cd $APP_DIR; npm run dev"
+echo "Start dev with:"
+echo "  php artisan serve"
+echo "  npm run dev"

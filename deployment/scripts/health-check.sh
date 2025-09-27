@@ -8,7 +8,7 @@ set -euo pipefail
 
 # Configuration
 APP_URL="https://your-domain.com"
-APP_DIR="/home/memorial/app"
+APP_DIR="/home/memorial"
 LOG_FILE="/var/log/memorial-health.log"
 ALERT_EMAIL="admin@your-domain.com"  # Optional: configure email alerts
 
@@ -154,7 +154,7 @@ check_memory() {
 check_error_logs() {
     log "Checking for recent errors..."
 
-    laravel_log="/home/memorial/app/storage/logs/laravel.log"
+    laravel_log="/home/memorial/storage/logs/laravel.log"
 
     if [[ -f "$laravel_log" ]]; then
         recent_errors=$(grep -c "ERROR\|CRITICAL" "$laravel_log" 2>/dev/null | tail -100 || echo "0")

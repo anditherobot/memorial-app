@@ -17,7 +17,7 @@ StartLimitInterval=60s
 StartLimitBurst=3
 
 # Working directory
-WorkingDirectory=/home/memorial/app
+WorkingDirectory=/home/memorial
 
 # Environment
 Environment=HOME=/home/memorial
@@ -36,8 +36,8 @@ NoNewPrivileges=yes
 PrivateTmp=yes
 ProtectSystem=strict
 ProtectHome=yes
-ReadWritePaths=/home/memorial/app/storage
-ReadWritePaths=/home/memorial/app/database
+ReadWritePaths=/home/memorial/storage
+ReadWritePaths=/home/memorial/database
 ReadWritePaths=/tmp
 
 # Resource limits

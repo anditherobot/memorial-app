@@ -77,7 +77,6 @@ Supported remote storage:
    # Clone repository and setup application
    cd /home/memorial
    git clone <repository-url> .
-   cd app
    composer install --no-dev --optimize-autoloader
    npm ci && npm run build
    ```
@@ -99,7 +98,7 @@ Supported remote storage:
 5. **Verify and Start Services**
    ```bash
    # Check application
-   cd /home/memorial/app
+   cd /home/memorial
    php artisan config:clear
    php artisan migrate --force
 
@@ -123,8 +122,8 @@ cd /tmp/restore
 tar -xzf /home/memorial/backups/memorial_backup_20241201_120000.tar.gz
 
 # Copy database
-cp memorial_backup_*/database.sqlite /home/memorial/app/database/
-chmod 664 /home/memorial/app/database/database.sqlite
+cp memorial_backup_*/database.sqlite /home/memorial/database/
+chmod 664 /home/memorial/database/database.sqlite
 
 # Clear caches and restart
 cd /home/memorial/app
@@ -141,10 +140,10 @@ cd /tmp/restore
 tar -xzf /home/memorial/backups/memorial_backup_20241201_120000.tar.gz
 
 # Restore storage
-sudo rm -rf /home/memorial/app/storage
-sudo cp -r memorial_backup_*/storage /home/memorial/app/
-sudo chown -R memorial:www-data /home/memorial/app/storage
-sudo chmod -R 775 /home/memorial/app/storage
+sudo rm -rf /home/memorial/storage
+sudo cp -r memorial_backup_*/storage /home/memorial/
+sudo chown -R memorial:www-data /home/memorial/storage
+sudo chmod -R 775 /home/memorial/storage
 ```
 
 ### Point-in-Time Recovery
@@ -167,10 +166,10 @@ If database is corrupted but readable:
 
 ```bash
 # Create backup of current state
-cp /home/memorial/app/database/database.sqlite /tmp/corrupted.sqlite
+cp /home/memorial/database/database.sqlite /tmp/corrupted.sqlite
 
 # Attempt repair
-cd /home/memorial/app
+cd /home/memorial
 sqlite3 database/database.sqlite "PRAGMA integrity_check;"
 
 # If integrity check fails, restore from backup
@@ -183,7 +182,7 @@ If migrations are broken:
 
 ```bash
 # Reset migration table (DANGEROUS - only in emergency)
-cd /home/memorial/app
+cd /home/memorial
 sqlite3 database/database.sqlite "DROP TABLE IF EXISTS migrations;"
 
 # Restore from backup and re-run migrations
@@ -209,8 +208,8 @@ tar -xzf /home/memorial/backups/memorial_backup_20241201_120000.tar.gz
 cd memorial_backup_*/storage/app/public/media
 
 # Copy specific file
-cp image.jpg /home/memorial/app/storage/app/public/media/
-sudo chown memorial:www-data /home/memorial/app/storage/app/public/media/image.jpg
+cp image.jpg /home/memorial/storage/app/public/media/
+sudo chown memorial:www-data /home/memorial/storage/app/public/media/image.jpg
 ```
 
 ### Bulk File Recovery
@@ -226,11 +225,11 @@ tar -xzf /home/memorial/backups/memorial_backup_20241201_120000.tar.gz
 # Copy all images
 find memorial_backup_*/storage -name "*.jpg" -o -name "*.png" -o -name "*.gif" | \
 while read file; do
-    cp "$file" /home/memorial/app/storage/app/public/media/
+    cp "$file" /home/memorial/storage/app/public/media/
 done
 
 # Fix permissions
-sudo chown -R memorial:www-data /home/memorial/app/storage/app/public/media/
+sudo chown -R memorial:www-data /home/memorial/storage/app/public/media/
 ```
 
 ## Testing Recovery Procedures

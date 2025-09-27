@@ -101,7 +101,7 @@ After deployment, verify:
 ## Support
 
 For issues:
-1. Check application logs: `/home/memorial/app/storage/logs/laravel.log`
+1. Check application logs: `/home/memorial/storage/logs/laravel.log`
 2. Check system logs: `sudo journalctl -u memorial-worker`
 3. Run health check: `/home/memorial/deployment/scripts/health-check.sh`
 4. Review documentation in `docs/` directory

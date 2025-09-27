@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="Floral remembrance">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fdf2f8"/>
+      <stop offset="100%" stop-color="#fce7f3"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#bg)"/>
+  <g transform="translate(600,420)">
+    <circle r="22" fill="#9d174d"/>
+    <g fill="#be185d">
+      <circle r="85" cx="0" cy="-140"/>
+      <circle r="85" cx="121" cy="-70"/>
+      <circle r="85" cx="121" cy="70"/>
+      <circle r="85" cx="0" cy="140"/>
+      <circle r="85" cx="-121" cy="70"/>
+      <circle r="85" cx="-121" cy="-70"/>
+    </g>
+    <circle r="42" fill="#fb7185"/>
+  </g>
+  <rect x="585" y="420" width="30" height="220" rx="15" fill="#16a34a"/>
+  <path d="M600,520 C560,560 520,600 520,640 C560,620 600,600 620,560" fill="none" stroke="#16a34a" stroke-width="18" stroke-linecap="round"/>
+  <text x="50%" y="92%" text-anchor="middle" font-family="system-ui,Segoe UI,Roboto,sans-serif" font-size="40" fill="#6b7280">In Bloom, In Memory</text>
+</svg>
+

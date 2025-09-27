@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-label="Sample 6">
+  <defs>
+    <linearGradient id="g6" x1="1" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#14b8a6"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#g6)"/>
+  <rect x="220" y="180" width="760" height="440" rx="24" fill="#ffffff22" stroke="#ffffff55" stroke-width="6"/>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="72" font-family="Inter,Arial" fill="#ffffffcc">Memorial 06</text>
+</svg>
+

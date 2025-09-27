@@ -59,13 +59,11 @@ sudo usermod -aG www-data memorial
 sudo su - memorial
 
 # Create application directory
-mkdir -p /home/memorial/app
+mkdir -p /home/memorial
 cd /home/memorial
 
 # Clone repository (replace with your repo URL)
 git clone https://github.com/your-repo/memorial.git .
-cd app
-
 # Install PHP dependencies
 composer install --no-dev --optimize-autoloader
 
@@ -76,8 +74,8 @@ npm run build
 # Set correct permissions
 sudo chown -R memorial:www-data /home/memorial
 sudo chmod -R 755 /home/memorial
-sudo chmod -R 775 /home/memorial/app/storage
-sudo chmod -R 775 /home/memorial/app/bootstrap/cache
+sudo chmod -R 775 /home/memorial/storage
+sudo chmod -R 775 /home/memorial/bootstrap/cache
 ```
 
 ### Environment configuration
@@ -97,7 +95,7 @@ APP_DEBUG=false
 APP_URL=https://your-domain.com
 
 DB_CONNECTION=sqlite
-DB_DATABASE=/home/memorial/app/database/database.sqlite
+DB_DATABASE=/home/memorial/database/database.sqlite
 
 # Generate secure keys
 APP_KEY=
@@ -240,7 +238,7 @@ Add the following cron entries:
 0 2 * * * /usr/local/bin/memorial-backup
 
 # Weekly cleanup of old logs (Sunday 3 AM)
-0 3 * * 0 find /home/memorial/app/storage/logs -name "*.log" -mtime +30 -delete
+0 3 * * 0 find /home/memorial/storage/logs -name "*.log" -mtime +30 -delete
 ```
 
 ## 7. Security Hardening
@@ -260,9 +258,9 @@ sudo ufw enable
 # Secure file permissions
 sudo find /home/memorial -type f -exec chmod 644 {} \;
 sudo find /home/memorial -type d -exec chmod 755 {} \;
-sudo chmod -R 775 /home/memorial/app/storage
-sudo chmod -R 775 /home/memorial/app/bootstrap/cache
-sudo chmod 600 /home/memorial/app/.env
+sudo chmod -R 775 /home/memorial/storage
+sudo chmod -R 775 /home/memorial/bootstrap/cache
+sudo chmod 600 /home/memorial/.env
 ```
 
 ### Rate limiting
@@ -273,7 +271,7 @@ The application includes built-in rate limiting for uploads and forms. Monitor `
 ### Application logs
 ```bash
 # Laravel logs
-tail -f /home/memorial/app/storage/logs/laravel.log
+tail -f /home/memorial/storage/logs/laravel.log
 
 # Nginx logs
 tail -f /var/log/nginx/access.log
@@ -292,7 +290,7 @@ curl -I https://your-domain.com
 curl -I https://your-domain.com/admin/wishes?token=your-admin-token
 
 # Test database
-cd /home/memorial/app && php artisan tinker
+cd /home/memorial && php artisan tinker
 # In tinker: App\Models\User::count()
 ```
 
@@ -306,7 +304,6 @@ sudo apt update && sudo apt upgrade
 # Update application
 cd /home/memorial
 git pull origin main
-cd app
 composer install --no-dev --optimize-autoloader
 npm ci && npm run build
 php artisan migrate --force
@@ -329,13 +326,13 @@ sudo systemctl restart memorial-worker
 **Permission denied errors:**
 ```bash
 sudo chown -R memorial:www-data /home/memorial
-sudo chmod -R 775 /home/memorial/app/storage
+sudo chmod -R 775 /home/memorial/storage
 ```
 
 **Database locked errors:**
 ```bash
 # Check for long-running processes
-lsof /home/memorial/app/database/database.sqlite
+lsof /home/memorial/database/database.sqlite
 # Kill if necessary and restart workers
 ```
 
@@ -364,7 +361,7 @@ sudo systemctl status php8.3-fpm
 **Database optimization:**
 ```bash
 # Analyze and optimize
-cd /home/memorial/app
+cd /home/memorial
 sqlite3 database/database.sqlite "ANALYZE;"
 sqlite3 database/database.sqlite "VACUUM;"
 ```

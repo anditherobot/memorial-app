@@ -2,19 +2,19 @@
 # Install with: sudo -u memorial crontab /home/memorial/deployment/scripts/crontab-memorial
 
 # Laravel scheduler - runs every minute
-* * * * * cd /home/memorial/app && php artisan schedule:run >> /dev/null 2>&1
+* * * * * cd /home/memorial && php artisan schedule:run >> /dev/null 2>&1
 
 # Daily backups at 2:00 AM
 0 2 * * * /usr/local/bin/memorial-backup backup >> /var/log/memorial-backup.log 2>&1
 
 # Weekly database optimization (Sunday 3:00 AM)
-0 3 * * 0 cd /home/memorial/app && sqlite3 database/database.sqlite "PRAGMA optimize; VACUUM;" >> /var/log/memorial-maintenance.log 2>&1
+0 3 * * 0 cd /home/memorial && sqlite3 database/database.sqlite "PRAGMA optimize; VACUUM;" >> /var/log/memorial-maintenance.log 2>&1
 
 # Daily log cleanup - remove logs older than 30 days (4:00 AM)
-0 4 * * * find /home/memorial/app/storage/logs -name "*.log" -mtime +30 -delete >> /var/log/memorial-maintenance.log 2>&1
+0 4 * * * find /home/memorial/storage/logs -name "*.log" -mtime +30 -delete >> /var/log/memorial-maintenance.log 2>&1
 
 # Weekly cleanup of failed job records (Monday 5:00 AM)
-0 5 * * 1 cd /home/memorial/app && php artisan queue:prune-failed --hours=168 >> /var/log/memorial-maintenance.log 2>&1
+0 5 * * 1 cd /home/memorial && php artisan queue:prune-failed --hours=168 >> /var/log/memorial-maintenance.log 2>&1
 
 # Monthly backup verification (1st of month, 6:00 AM)
 0 6 1 * * /home/memorial/deployment/scripts/verify-backups.sh >> /var/log/memorial-backup-verify.log 2>&1

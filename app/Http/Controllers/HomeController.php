@@ -15,19 +15,19 @@ class HomeController extends Controller
 
         $photos = [
             [
-                'url' => 'https://placehold.co/1200x800/png?text=Photo+1',
-                'alt' => 'Alex smiling outdoors',
-                'caption' => 'Spring afternoon in the park',
+                'url' => asset('images/memorial-flower.svg'),
+                'alt' => 'Floral remembrance illustration',
+                'caption' => 'In bloom, in memory',
             ],
             [
-                'url' => 'https://placehold.co/1200x800/png?text=Photo+2',
-                'alt' => 'Candid photo during an art workshop',
-                'caption' => 'Art workshop with friends',
+                'url' => asset('images/memorial-candle.svg'),
+                'alt' => 'Candle of remembrance illustration',
+                'caption' => 'A light that continues',
             ],
             [
-                'url' => 'https://placehold.co/1200x800/png?text=Photo+3',
-                'alt' => 'Sunset over the ocean',
-                'caption' => 'A favorite view at dusk',
+                'url' => asset('images/memorial-dove.svg'),
+                'alt' => 'Dove of peace illustration',
+                'caption' => 'Peace and grace',
             ],
         ];
 
@@ -65,4 +65,3 @@ class HomeController extends Controller
         return view('home', compact('bio', 'photos', 'updates'));
     }
 }
-
