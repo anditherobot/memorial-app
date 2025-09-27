@@ -26,6 +26,18 @@ logs/
 /public/storage
 /storage/*.key
 /storage/pail
+## Storage (caches, logs, uploads)
+/storage/framework/*
+!/storage/framework/.gitignore
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+!/storage/logs/.gitignore
+/storage/app/public/*
+!/storage/app/public/.gitignore
+## Local sqlite databases
+/database/*.sqlite*
 phpunit.xml
 Homestead.json
 Homestead.yaml
