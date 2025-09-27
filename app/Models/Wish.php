@@ -13,6 +13,10 @@ class Wish extends Model
         'name', 'message', 'submitted_ip', 'is_approved'
     ];
 
+    protected $casts = [
+        'is_approved' => 'boolean',
+    ];
+
     public function media()
     {
         return $this->morphToMany(Media::class, 'attachable', 'media_attachables')
@@ -20,4 +24,3 @@ class Wish extends Model
             ->withTimestamps();
     }
 }
-

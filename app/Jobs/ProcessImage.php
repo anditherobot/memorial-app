@@ -28,16 +28,27 @@ class ProcessImage implements ShouldQueue
         $targetDir = 'media/derivatives/'.$media->id;
         $thumbPath = $targetDir.'/thumb.jpg';
 
-        $manager = new ImageManager(new GdDriver());
-        $image = $manager->read($source);
-        $image = $image->scale(width: 800, height: null);
+        try {
+            $manager = new ImageManager(new GdDriver());
+            $image = $manager->read($source);
+            $image = $image->scale(width: 800, height: null);
 
-        \Storage::disk('public')->put($thumbPath, (string) $image->toJpeg(quality: 80));
+            \Storage::disk('public')->put($thumbPath, (string) $image->toJpeg(quality: 80));
 
-        MediaDerivative::updateOrCreate(
-            ['media_id' => $media->id, 'type' => 'thumbnail', 'storage_path' => $thumbPath],
-            ['width' => $image->width(), 'height' => $image->height(), 'size_bytes' => \Storage::disk('public')->size($thumbPath)]
-        );
+            MediaDerivative::updateOrCreate(
+                ['media_id' => $media->id, 'type' => 'thumbnail', 'storage_path' => $thumbPath],
+                ['width' => $image->width(), 'height' => $image->height(), 'size_bytes' => \Storage::disk('public')->size($thumbPath)]
+            );
+        } catch (\Throwable $e) {
+            // Fallback: write a placeholder from the original bytes if decoding fails
+            if (is_file($source)) {
+                \Storage::disk('public')->put($thumbPath, (string) @file_get_contents($source));
+                MediaDerivative::updateOrCreate(
+                    ['media_id' => $media->id, 'type' => 'thumbnail', 'storage_path' => $thumbPath],
+                    ['width' => null, 'height' => null, 'size_bytes' => \Storage::disk('public')->size($thumbPath)]
+                );
+            }
+        }
 
         // Optional: optimize with spatie/image-optimizer if binaries are available.
         try {

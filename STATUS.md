@@ -33,6 +33,11 @@ Legend: `todo`, `in_progress`, `done`, `blocked`
 | Testing & CI | TEST-03 | done | task: TEST-03 | Unit test ProcessImage |
 | Testing & CI | TEST-04 | done | task: TEST-04 | Browser test (optional) |
 | Testing & CI | TEST-05 | done | task: TEST-05 | GitHub Actions (pint, phpunit, npm build) |
+| Testing & CI | TEST-06 | done | task: TEST-06 | Feature tests: Gallery (samples, pagination, thumbnails) |
+| Testing & CI | TEST-07 | done | task: TEST-07 | Feature tests: Admin updates management (create/edit/delete) |
+| Testing & CI | TEST-08 | done | task: TEST-08 | Feature tests: Upload API (happy path + max file) |
+| Testing & CI | TEST-09 | done | task: TEST-09 | Unit tests: Wish model, Post model, Jobs (ProcessImage/GeneratePoster) |
+| Testing & CI | TEST-10 | done | task: TEST-10 | Test DB hardening: SQLite :memory: handling + config fix |
 | Deployment & Ops | OPS-01 | done | task: OPS-01 | Server prep doc |
 | Deployment & Ops | OPS-02 | done | task: OPS-02 | Nginx vhost config |
 | Deployment & Ops | OPS-03 | done | task: OPS-03 | Queue worker systemd |

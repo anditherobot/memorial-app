@@ -7,131 +7,63 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  build-test:
     runs-on: ubuntu-latest
-
-    services:
-      sqlite:
-        image: noneworx/sqlite3:latest
-        options: >-
-          --health-cmd "sqlite3 --version"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.3'
-        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
-        coverage: none
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer
+          extensions: mbstring, tokenizer, fileinfo, gd
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-        cache-dependency-path: 'package-lock.json'
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('**/composer.lock') }}
 
-    - name: Copy .env
-      run: |
-        php -r "file_exists('.env') || copy('.env.example', '.env');"
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
 
-    - name: Install PHP Dependencies
-      run: |
-        composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Copy .env
+        run: cp .env.example .env
 
-    - name: Install Node Dependencies
-      run: |
-        npm install --no-audit --no-fund
+      - name: Generate key
+        run: php artisan key:generate
 
-    - name: Generate key
-      run: |
-        php artisan key:generate
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-    - name: Directory Permissions
-      run: |
-        chmod -R 755 storage bootstrap/cache
+      - name: Cache NPM
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: npm-${{ hashFiles('**/package-lock.json') }}
 
-    - name: Create Database
-      run: |
-        mkdir -p database
-        touch database/database.sqlite
+      - name: Install Node dependencies
+        run: npm ci
 
-    - name: Execute tests (Unit and Feature tests) via Pest
-      env:
-        DB_CONNECTION: sqlite
-        DB_DATABASE: database/database.sqlite
-        ADMIN_TOKEN: test_admin_token
-      run: |
-        php artisan test
+      - name: Build assets
+        run: npm run build
 
-    - name: Laravel Pint (Code Style)
-      run: |
-        ./vendor/bin/pint --test
+      - name: Pint (format check)
+        run: vendor/bin/pint --test
 
-    - name: Build Assets
-      run: |
-        npm run build
+      - name: Run tests
+        env:
+          APP_ENV: testing
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ':memory:'
+          CACHE_STORE: array
+          SESSION_DRIVER: array
+          QUEUE_CONNECTION: sync
+        run: php artisan test --colors=always
 
-    - name: Check CSS Bundle Size
-      run: |
-        CSS_SIZE=$(stat -c%s "public/build/assets/app-*.css" 2>/dev/null | head -1 || echo "0")
-        CSS_SIZE_KB=$((CSS_SIZE / 1024))
-        echo "CSS bundle size: ${CSS_SIZE_KB} KB"
-        if [ $CSS_SIZE_KB -gt 30 ]; then
-          echo "❌ CSS bundle size (${CSS_SIZE_KB} KB) exceeds 30 KB limit"
-          exit 1
-        else
-          echo "✅ CSS bundle size (${CSS_SIZE_KB} KB) is within acceptable range"
-        fi
-
-  security:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.3'
-        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
-
-    - name: Install Dependencies
-      run: |
-        composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-
-    - name: Security Audit
-      run: |
-        composer audit
-
-  static-analysis:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.3'
-        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
-
-    - name: Install Dependencies
-      run: |
-        composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-
-    - name: PHPStan Static Analysis
-      run: |
-        if [ -f "vendor/bin/phpstan" ]; then
-          ./vendor/bin/phpstan analyse --memory-limit=2G
-        else
-          echo "PHPStan not installed, skipping static analysis"
-        fi

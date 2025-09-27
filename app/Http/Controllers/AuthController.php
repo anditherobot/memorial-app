@@ -17,14 +17,31 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $data = $request->validate([
-            'email' => ['required','email'],
-            'password' => ['required','string'],
-            'remember' => ['nullable','boolean'],
+            'email' => ['required', 'email', 'max:255'],
+            'password' => ['required', 'string', 'max:255'],
+            'remember' => ['nullable', 'boolean'],
+        ], [
+            'email.required' => 'Email address is required.',
+            'email.email' => 'Please enter a valid email address.',
+            'password.required' => 'Password is required.',
         ]);
+
+        // Trim whitespace from inputs
+        $data['email'] = trim($data['email']);
+        $data['password'] = trim($data['password']);
+
+        // Check for empty inputs after trimming
+        if (empty($data['email'])) {
+            return back()->withErrors(['email' => 'Email address cannot be empty.'])->withInput();
+        }
+
+        if (empty($data['password'])) {
+            return back()->withErrors(['password' => 'Password cannot be empty.'])->withInput();
+        }
 
         $user = User::where('email', $data['email'])->first();
         if (!$user || !Hash::check($data['password'], $user->password)) {
-            return back()->withErrors(['email' => 'Invalid credentials'])->withInput();
+            return back()->withErrors(['email' => 'Invalid email address or password.'])->withInput();
         }
 
         Auth::login($user, (bool)($data['remember'] ?? false));

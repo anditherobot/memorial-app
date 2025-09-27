@@ -19,7 +19,9 @@
       "Bash(curl:*)",
       "Bash(php:*)",
       "Bash(gh repo create:*)",
-      "Bash(git remote add:*)"
+      "Bash(git remote add:*)",
+      "Bash(sqlite3:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []
