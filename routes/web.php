@@ -65,6 +65,32 @@ Route::middleware(['auth','admin'])->prefix('admin')->group(function () {
     Route::patch('/tasks/{task}/status', [\App\Http\Controllers\AdminTaskController::class, 'updateStatus'])->name('admin.tasks.update-status');
     Route::delete('/tasks/{task}', [\App\Http\Controllers\AdminTaskController::class, 'destroy'])->name('admin.tasks.destroy');
 
+    // Memorial Events management
+    Route::prefix('memorial/events')->name('memorial.events.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\MemorialEventsController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\MemorialEventsController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\MemorialEventsController::class, 'store'])->name('store');
+        Route::get('/{event}', [\App\Http\Controllers\Admin\MemorialEventsController::class, 'show'])->name('show');
+        Route::get('/{event}/edit', [\App\Http\Controllers\Admin\MemorialEventsController::class, 'edit'])->name('edit');
+        Route::put('/{event}', [\App\Http\Controllers\Admin\MemorialEventsController::class, 'update'])->name('update');
+        Route::delete('/{event}', [\App\Http\Controllers\Admin\MemorialEventsController::class, 'destroy'])->name('destroy');
+    });
+
+    // Memorial Content management
+    Route::prefix('memorial/content')->name('memorial.content.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\MemorialContentController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\MemorialContentController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\MemorialContentController::class, 'store'])->name('store');
+        Route::get('/{contentType}/show', [\App\Http\Controllers\Admin\MemorialContentController::class, 'show'])->name('show');
+        Route::get('/{content}/edit', [\App\Http\Controllers\Admin\MemorialContentController::class, 'edit'])->name('edit');
+        Route::put('/{content}', [\App\Http\Controllers\Admin\MemorialContentController::class, 'update'])->name('update');
+        Route::delete('/{content}', [\App\Http\Controllers\Admin\MemorialContentController::class, 'destroy'])->name('destroy');
+
+        // Convenient type-based editing routes
+        Route::get('/{contentType}/edit-type', [\App\Http\Controllers\Admin\MemorialContentController::class, 'editByType'])->name('edit-by-type');
+        Route::put('/{contentType}/update-type', [\App\Http\Controllers\Admin\MemorialContentController::class, 'updateByType'])->name('update-by-type');
+    });
+
     // Documentation
     Route::get('/docs', [\App\Http\Controllers\AdminDocumentationController::class, 'index'])->name('admin.docs');
 });

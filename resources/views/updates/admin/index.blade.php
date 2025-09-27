@@ -1,10 +1,22 @@
-@extends('layouts.app')
+@extends('layouts.admin')
+
+@section('breadcrumbs')
+  <li class="inline-flex items-center">
+    <svg class="w-5 h-5 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+      <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+    </svg>
+    <span class="text-gray-500">Updates</span>
+  </li>
+@endsection
 
 @section('content')
-  <div class="max-w-5xl mx-auto space-y-6">
+  <div class="max-w-6xl mx-auto space-y-6">
     <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-semibold">Manage Updates</h1>
-      <a href="{{ route('admin.updates.create') }}" class="px-4 py-2 bg-gray-900 text-white rounded">New Update</a>
+      <div>
+        <h1 class="text-2xl font-semibold text-gray-900">Manage Updates</h1>
+        <p class="text-sm text-gray-500">Memorial announcements and news</p>
+      </div>
+      <a href="{{ route('admin.updates.create') }}" class="px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800 transition-colors">New Update</a>
     </div>
 
     @if(session('status'))

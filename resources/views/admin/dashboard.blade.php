@@ -1,8 +1,20 @@
-@extends('layouts.app')
+@extends('layouts.admin')
+
+@section('breadcrumbs')
+  <li class="inline-flex items-center">
+    <svg class="w-5 h-5 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+      <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+    </svg>
+    <span class="text-gray-500">Dashboard</span>
+  </li>
+@endsection
 
 @section('content')
-  <div class="max-w-5xl mx-auto space-y-6">
-    <h1 class="text-2xl font-semibold">Admin Dashboard</h1>
+  <div class="max-w-6xl mx-auto space-y-6">
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-semibold text-gray-900">Dashboard</h1>
+      <p class="text-sm text-gray-500">Memorial administration overview</p>
+    </div>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
       <div class="p-4 bg-white border rounded">
@@ -23,14 +35,96 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-      <a href="{{ route('admin.wishes') }}" class="p-4 rounded border bg-white hover:bg-gray-50">Moderate Wishes</a>
-      <a href="{{ route('gallery.index') }}" class="p-4 rounded border bg-white hover:bg-gray-50">View Gallery</a>
-      <a href="{{ route('updates.index') }}" class="p-4 rounded border bg-white hover:bg-gray-50">View Updates</a>
-      <a href="{{ route('admin.gallery') }}" class="p-4 rounded border bg-white hover:bg-gray-50">Manage Gallery</a>
-      <a href="{{ route('admin.updates.index') }}" class="p-4 rounded border bg-white hover:bg-gray-50">Manage Updates</a>
-      <a href="{{ route('admin.tasks.index') }}" class="p-4 rounded border bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium">🎯 Task Tracker</a>
-      <a href="{{ route('admin.docs') }}" class="p-4 rounded border bg-green-50 hover:bg-green-100 text-green-700 font-medium">📚 Documentation</a>
+    <!-- Memorial Management Section -->
+    <div class="bg-white rounded-lg shadow-sm border p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Memorial Management</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Memorial Events (In Development) -->
+        <div class="p-4 border border-dashed border-blue-200 bg-blue-50 rounded-lg text-center">
+          <div class="text-2xl mb-2">📅</div>
+          <div class="font-medium text-blue-900">Memorial Events</div>
+          <div class="text-xs mt-1 text-blue-600">Phase 2 - In Development</div>
+        </div>
+
+        <!-- Memorial Content (In Development) -->
+        <div class="p-4 border border-dashed border-blue-200 bg-blue-50 rounded-lg text-center">
+          <div class="text-2xl mb-2">📝</div>
+          <div class="font-medium text-blue-900">Memorial Content</div>
+          <div class="text-xs mt-1 text-blue-600">Phase 3 - In Development</div>
+        </div>
+
+        <!-- Gallery Management -->
+        <a href="{{ route('admin.gallery') }}" class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-center">
+          <div class="text-2xl mb-2">🖼️</div>
+          <div class="font-medium text-gray-900">Gallery</div>
+          <div class="text-xs text-gray-500 mt-1">Manage photos</div>
+        </a>
+
+        <!-- Wishes & Messages -->
+        <a href="{{ route('admin.wishes') }}" class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-center">
+          <div class="text-2xl mb-2">💌</div>
+          <div class="font-medium text-gray-900">Messages</div>
+          <div class="text-xs text-gray-500 mt-1">{{ $stats['wishes_pending'] }} pending</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Content Management -->
+    <div class="bg-white rounded-lg shadow-sm border p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Content & Updates</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <a href="{{ route('admin.updates.index') }}" class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="font-medium text-gray-900">Updates</div>
+              <div class="text-sm text-gray-500">Manage announcements</div>
+            </div>
+            <div class="text-2xl">📰</div>
+          </div>
+        </a>
+
+        <a href="{{ route('admin.tasks.index') }}" class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="font-medium text-gray-900">Task Tracker</div>
+              <div class="text-sm text-gray-500">Development tasks</div>
+            </div>
+            <div class="text-2xl">📋</div>
+          </div>
+        </a>
+
+        <a href="{{ route('admin.docs') }}" class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="font-medium text-gray-900">Documentation</div>
+              <div class="text-sm text-gray-500">Help & guides</div>
+            </div>
+            <div class="text-2xl">📚</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-lg shadow-sm border p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+      <div class="flex flex-wrap gap-3">
+        <a href="{{ route('upload.show') }}" class="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 transition-colors">
+          <span class="mr-2">📸</span>
+          Add Photos
+        </a>
+        <a href="{{ route('admin.updates.create') }}" class="inline-flex items-center px-4 py-2 bg-green-50 text-green-700 rounded-md hover:bg-green-100 transition-colors">
+          <span class="mr-2">✍️</span>
+          New Update
+        </a>
+        <a href="{{ route('home') }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-gray-50 text-gray-700 rounded-md hover:bg-gray-100 transition-colors">
+          <span class="mr-2">🌐</span>
+          View Site
+          <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+          </svg>
+        </a>
+      </div>
     </div>
   </div>
 @endsection

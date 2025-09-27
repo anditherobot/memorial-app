@@ -2,66 +2,135 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MemorialContent;
+use App\Models\MemorialEvent;
+use App\Models\Post;
+use App\Models\Media;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
 {
     /**
-     * Display the memorial homepage with bio, three photos, and updates.
+     * Display the memorial homepage with dynamic memorial content, events, and updates.
      */
     public function __invoke(Request $request)
     {
-        $bio = "We celebrate the life of Alex Morgan — a beloved friend, artist, and mentor. Alex’s warmth, curiosity, and generosity touched everyone they met. This space gathers memories, photos, and updates for those who wish to pay respects and share stories.";
+        // Get memorial content
+        $memorialName = MemorialContent::findByType('memorial_name');
+        $biography = MemorialContent::findByType('bio');
+        $memorialDates = MemorialContent::findByType('memorial_dates');
+        $contactInfo = MemorialContent::findByType('contact_info');
 
-        $photos = [
-            [
-                'url' => asset('images/memorial-flower.svg'),
-                'alt' => 'Floral remembrance illustration',
-                'caption' => 'In bloom, in memory',
-            ],
-            [
-                'url' => asset('images/memorial-candle.svg'),
-                'alt' => 'Candle of remembrance illustration',
-                'caption' => 'A light that continues',
-            ],
-            [
-                'url' => asset('images/memorial-dove.svg'),
-                'alt' => 'Dove of peace illustration',
-                'caption' => 'Peace and grace',
-            ],
-        ];
+        // Fallback bio if none configured
+        $bio = $biography?->content ?: "We celebrate the life of a beloved friend, family member, and mentor. Their warmth, curiosity, and generosity touched everyone they met. This space gathers memories, photos, and updates for those who wish to pay respects and share stories.";
 
-        $updates = [
-            [
-                'date' => '2025-10-12',
-                'title' => 'Memorial Gathering',
-                'address' => 'Lakeside Pavilion, 123 Aurora Blvd, Hometown',
-                'links' => [
-                    ['label' => 'Google Maps', 'url' => 'https://maps.google.com/?q=Lakeside+Pavilion+123+Aurora+Blvd'],
-                    ['label' => 'Livestream', 'url' => 'https://example.org/livestream'],
+        // Get recent photos from gallery (limit to 3)
+        $galleryPhotos = Media::where('is_public', true)
+            ->whereNotNull('width')
+            ->whereNotNull('height')
+            ->latest()
+            ->limit(3)
+            ->get();
+
+        // Default photos if no gallery photos available
+        $photos = [];
+        if ($galleryPhotos->count() > 0) {
+            foreach ($galleryPhotos as $photo) {
+                $photos[] = [
+                    'url' => Storage::disk('public')->url($photo->storage_path),
+                    'alt' => $photo->original_filename,
+                    'caption' => $photo->original_filename,
+                ];
+            }
+        } else {
+            // Fallback to default memorial images
+            $photos = [
+                [
+                    'url' => asset('images/memorial-flower.svg'),
+                    'alt' => 'Floral remembrance illustration',
+                    'caption' => 'In bloom, in memory',
                 ],
-                'notes' => 'Doors open at 2:00 PM; program at 3:00 PM.',
-            ],
-            [
-                'date' => '2025-10-01',
-                'title' => 'Obituary',
+                [
+                    'url' => asset('images/memorial-candle.svg'),
+                    'alt' => 'Candle of remembrance illustration',
+                    'caption' => 'A light that continues',
+                ],
+                [
+                    'url' => asset('images/memorial-dove.svg'),
+                    'alt' => 'Dove of peace illustration',
+                    'caption' => 'Peace and grace',
+                ],
+            ];
+        }
+
+        // Get upcoming memorial events (limit to 3)
+        $upcomingEvents = MemorialEvent::active()
+            ->where('date', '>=', now()->startOfDay())
+            ->orderBy('date')
+            ->orderBy('time')
+            ->limit(3)
+            ->get();
+
+        // Get recent published updates/announcements (limit to 3)
+        $recentUpdates = Post::where('is_published', true)
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->orderByDesc('published_at')
+            ->limit(3)
+            ->get();
+
+        // Combine events and updates into a unified updates array
+        $updates = collect();
+
+        // Add events
+        foreach ($upcomingEvents as $event) {
+            $updates->push([
+                'type' => 'event',
+                'date' => $event->date->format('Y-m-d'),
+                'title' => $event->title,
+                'address' => $event->address,
+                'links' => [],
+                'notes' => $event->notes,
+                'event_type' => $event->event_type,
+                'time' => $event->time,
+                'venue_name' => $event->venue_name,
+            ]);
+        }
+
+        // Add recent updates
+        foreach ($recentUpdates as $update) {
+            $updates->push([
+                'type' => 'update',
+                'date' => $update->published_at->format('Y-m-d'),
+                'title' => $update->title,
                 'address' => null,
                 'links' => [
-                    ['label' => 'Read Online', 'url' => 'https://example.org/obituary'],
+                    ['label' => 'Read More', 'url' => route('updates.show', $update)],
                 ],
-                'notes' => 'Includes details on donations in lieu of flowers.',
-            ],
-            [
-                'date' => '2025-09-20',
-                'title' => 'Guestbook & Wishes',
-                'address' => null,
-                'links' => [
-                    ['label' => 'Sign the Wishwall', 'url' => 'https://example.org/wishes'],
-                ],
-                'notes' => 'Share a memory, photo, or message for the family.',
-            ],
-        ];
+                'notes' => \Str::limit(strip_tags($update->body), 100),
+            ]);
+        }
 
-        return view('home', compact('bio', 'photos', 'updates'));
+        // Sort by date descending and take latest 3
+        $updates = $updates->sortByDesc('date')->take(3)->values();
+
+        // Add default items if no content exists
+        if ($updates->isEmpty()) {
+            $updates = collect([
+                [
+                    'type' => 'info',
+                    'date' => now()->format('Y-m-d'),
+                    'title' => 'Guestbook & Wishes',
+                    'address' => null,
+                    'links' => [
+                        ['label' => 'Sign the Wishwall', 'url' => route('wishes.index')],
+                    ],
+                    'notes' => 'Share a memory, photo, or message for the family.',
+                ],
+            ]);
+        }
+
+        return view('home', compact('bio', 'photos', 'updates', 'memorialName', 'memorialDates', 'contactInfo'));
     }
 }

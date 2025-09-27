@@ -1,8 +1,20 @@
-@extends('layouts.app')
+@extends('layouts.admin')
+
+@section('breadcrumbs')
+  <li class="inline-flex items-center">
+    <svg class="w-5 h-5 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+      <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+    </svg>
+    <span class="text-gray-500">Documentation</span>
+  </li>
+@endsection
 
 @section('content')
-<div class="max-w-5xl mx-auto space-y-6">
-  <h1 class="text-2xl font-semibold">📚 Documentation</h1>
+<div class="max-w-6xl mx-auto space-y-6">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-semibold text-gray-900">📚 Documentation</h1>
+    <p class="text-sm text-gray-500">Help guides and system information</p>
+  </div>
 
   <!-- Quick Navigation -->
   <div class="p-4 bg-white border rounded">
