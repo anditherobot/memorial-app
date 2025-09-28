@@ -1,23 +1,15 @@
 @extends('layouts.admin')
 
-@section('breadcrumbs')
-  <li class="inline-flex items-center">
-    <svg class="w-5 h-5 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
-      <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-    </svg>
-    <span class="text-gray-500">Memorial Events</span>
-  </li>
-@endsection
+
 
 @section('content')
   <div class="max-w-6xl mx-auto space-y-6">
-    <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-semibold text-gray-900">Memorial Events</h1>
-      <a href="{{ route('memorial.events.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-        <span class="mr-2">➕</span>
-        Add Event
-      </a>
-    </div>
+    <x-admin-page-header
+        title="Memorial Events"
+        :breadcrumbs="[
+            ['title' => 'Memorial Events']
+        ]"
+    />
 
     <!-- Event Type Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

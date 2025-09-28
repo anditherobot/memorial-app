@@ -1,25 +1,15 @@
 @extends('layouts.admin')
 
-@section('breadcrumbs')
-  <li class="inline-flex items-center">
-    <svg class="w-5 h-5 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
-      <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
-    </svg>
-    <span class="text-gray-500">Task Tracker</span>
-  </li>
-@endsection
+
 
 @section('content')
 <div class="max-w-7xl mx-auto space-y-6">
-  <div class="flex items-center justify-between">
-    <div>
-      <h1 class="text-2xl font-semibold text-gray-900">Task & Feature Tracker</h1>
-      <p class="text-sm text-gray-500">Development and project management</p>
-    </div>
-    <button id="add-task-btn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-      + Add Task
-    </button>
-  </div>
+    <x-admin-page-header
+        title="Task & Feature Tracker"
+        :breadcrumbs="[
+            ['title' => 'Task Tracker']
+        ]"
+    />
 
   <!-- Kanban Board -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
