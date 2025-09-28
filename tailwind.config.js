@@ -16,7 +16,7 @@ export default {
             },
         },
     },
-    plugins: [],
+    plugins: [require('@tailwindcss/aspect-ratio')],
     corePlugins: {
         // Disable unused features to reduce bundle size
         float: false,

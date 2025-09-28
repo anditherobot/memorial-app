@@ -120,6 +120,8 @@
       </div>
     </main>
 
+    @include('layouts.partials.admin-footer')
+
     <!-- HTMX, Alpine, GLightbox (CDN) -->
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>

@@ -29,7 +29,7 @@
       </div>
 
       <p class="text-gray-600 text-lg">
-        Share your fondest memories of Alex Morgan on this page. You can add pictures and videos to pay tribute to Alex Morgan's life.
+        Share your fondest memories on this page. You can add pictures and videos to pay tribute to their life.
       </p>
     </div>
 
@@ -68,88 +68,26 @@
 
       <!-- Photos Tab Content -->
       <div x-show="activeTab === 'photos'" class="mt-6">
-        <form method="POST" action="{{ route('upload.store') }}" enctype="multipart/form-data">
-          @csrf
-          <div
-            class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-gray-400 transition-colors"
-            x-data="{ dragOver: false }"
-            @dragover.prevent="dragOver = true"
-            @dragleave.prevent="dragOver = false"
-            @drop.prevent="dragOver = false; handleDrop($event)"
-            :class="dragOver ? 'border-blue-400 bg-blue-50' : ''"
-          >
-            <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-            </svg>
-
-            <div class="space-y-2">
-              <p class="text-xl text-gray-600">
-                <button type="button" class="text-blue-600 hover:text-blue-500 underline" onclick="document.getElementById('photo-file').click()">
-                  Choose photos
-                </button>
-              </p>
-              <p class="text-sm text-gray-500">or drag and drop photos here</p>
-              <p class="text-xs text-gray-400">PNG, JPG, GIF up to 50MB</p>
-            </div>
-
-            <input
-              type="file"
-              id="photo-file"
-              name="file"
-              accept="image/*"
-              required
-              class="hidden"
-              @change="if(this.files.length) this.form.submit()"
-            />
-          </div>
-
-          @error('file')
-            <div class="mt-2 text-red-600 text-sm">{{ $message }}</div>
-          @enderror
-        </form>
+        <x-upload-form
+            :action="route('upload.store')"
+            title="Upload Photos"
+            input-name="photo-file"
+            accepted-file-types="image/*"
+            :max-file-size-mb="50"
+            file-types-description="PNG, JPG, GIF up to 50MB"
+        />
       </div>
 
       <!-- Videos Tab Content -->
       <div x-show="activeTab === 'videos'" class="mt-6">
-        <form method="POST" action="{{ route('upload.store') }}" enctype="multipart/form-data">
-          @csrf
-          <div
-            class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-gray-400 transition-colors"
-            x-data="{ dragOver: false }"
-            @dragover.prevent="dragOver = true"
-            @dragleave.prevent="dragOver = false"
-            @drop.prevent="dragOver = false; handleDrop($event)"
-            :class="dragOver ? 'border-blue-400 bg-blue-50' : ''"
-          >
-            <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-            </svg>
-
-            <div class="space-y-2">
-              <p class="text-xl text-gray-600">
-                <button type="button" class="text-blue-600 hover:text-blue-500 underline" onclick="document.getElementById('video-file').click()">
-                  Choose videos
-                </button>
-              </p>
-              <p class="text-sm text-gray-500">or drag and drop videos here</p>
-              <p class="text-xs text-gray-400">MP4, MOV up to 50MB</p>
-            </div>
-
-            <input
-              type="file"
-              id="video-file"
-              name="file"
-              accept="video/*"
-              required
-              class="hidden"
-              @change="if(this.files.length) this.form.submit()"
-            />
-          </div>
-
-          @error('file')
-            <div class="mt-2 text-red-600 text-sm">{{ $message }}</div>
-          @enderror
-        </form>
+        <x-upload-form
+            :action="route('upload.store')"
+            title="Upload Videos"
+            input-name="video-file"
+            accepted-file-types="video/*"
+            :max-file-size-mb="50"
+            file-types-description="MP4, MOV up to 50MB"
+        />
       </div>
     </div>
   </div>

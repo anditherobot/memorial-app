@@ -109,7 +109,7 @@
       {{ $slot ?? '' }}
       @yield('content')
     </main>
-    <footer class="max-w-5xl mx-auto p-4 text-sm text-gray-500">&copy; {{ date('Y') }}</footer>
+    @include('layouts.partials.footer')
 
     <!-- HTMX, Alpine, GLightbox (CDN) -->
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>

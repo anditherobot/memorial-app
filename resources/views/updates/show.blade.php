@@ -17,13 +17,8 @@
 
 @section('content')
   <div class="max-w-3xl mx-auto space-y-6">
-    @php $cover = $post->media()->with('derivatives')->first(); $thumb = optional($cover?->derivatives->first()); @endphp
-    @if($cover)
-      <img src="{{ Storage::disk('public')->url(($thumb?->storage_path) ?? $cover->storage_path) }}" class="w-full h-auto rounded border" alt="cover" />
-    @endif
-    <article class="prose max-w-none p-4 bg-white border rounded update-card">
-      <h1 class="mb-2">{{ $post->title }}</h1>
-      <div class="mb-3 space-x-2">
+    <h1 class="text-3xl font-bold">{{ $post->title }}</h1>
+    <div class="mb-3 space-x-2">
         @if($post->author_name)
           <span class="chip bg-gray-100">{{ $post->author_name }}</span>
         @endif
@@ -31,6 +26,20 @@
           <span class="chip bg-gray-100">{{ $post->published_at->toDayDateTimeString() }}</span>
         @endif
       </div>
+
+    @php $cover = $post->media()->with('derivatives')->first(); $thumb = optional($cover?->derivatives->first()); @endphp
+    @if($cover)
+        @if($cover->width >= $cover->height) {{-- Landscape or Square --}}
+            <div class="aspect-w-16 aspect-h-9 rounded-lg border overflow-hidden">
+                <img src="{{ Storage::disk('public')->url(($thumb?->storage_path) ?? $cover->storage_path) }}" class="w-full h-full object-cover" alt="cover" />
+            </div>
+        @else {{-- Portrait --}}
+            <div class="max-w-md mx-auto rounded-lg border overflow-hidden">
+                <img src="{{ Storage::disk('public')->url(($thumb?->storage_path) ?? $cover->storage_path) }}" class="w-full h-auto" alt="cover" />
+            </div>
+        @endif
+    @endif
+    <article class="prose max-w-none p-4 bg-white border rounded update-card">
       <div class="mt-4">{!! $post->body !!}</div>
     </article>
     <a href="{{ route('updates.index') }}" class="inline-block text-blue-600">← Back to updates</a>

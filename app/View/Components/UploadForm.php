@@ -16,19 +16,22 @@ class UploadForm extends Component
     public string $inputName;
     public string $acceptedFileTypes;
     public int $maxFileSizeMb;
+    public string $fileTypesDescription;
 
     public function __construct(
         string $action,
         string $title = 'Upload Memorial Photo',
         string $inputName = 'file',
         string $acceptedFileTypes = 'image/*',
-        int $maxFileSizeMb = 10
+        int $maxFileSizeMb = 10,
+        string $fileTypesDescription = 'PNG, JPG, GIF up to 10MB'
     ) {
         $this->action = $action;
         $this->title = $title;
         $this->inputName = $inputName;
         $this->acceptedFileTypes = $acceptedFileTypes;
         $this->maxFileSizeMb = $maxFileSizeMb;
+        $this->fileTypesDescription = $fileTypesDescription;
     }
 
     /**

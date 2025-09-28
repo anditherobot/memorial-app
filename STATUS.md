@@ -38,6 +38,7 @@ Legend: `todo`, `in_progress`, `done`, `blocked`
 | Testing & CI | TEST-08 | done | task: TEST-08 | Feature tests: Upload API (happy path + max file) |
 | Testing & CI | TEST-09 | done | task: TEST-09 | Unit tests: Wish model, Post model, Jobs (ProcessImage/GeneratePoster) |
 | Testing & CI | TEST-10 | done | task: TEST-10 | Test DB hardening: SQLite :memory: handling + config fix |
+| Testing & CI | TEST-11 | in_progress |  | Visual E2E: Playwright + MCP screenshots |
 | Deployment & Ops | OPS-01 | done | task: OPS-01 | Server prep doc |
 | Deployment & Ops | OPS-02 | done | task: OPS-02 | Nginx vhost config |
 | Deployment & Ops | OPS-03 | done | task: OPS-03 | Queue worker systemd |

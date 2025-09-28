@@ -8,6 +8,7 @@
     "preview": "vite preview --port 5173 --strictPort"
   },
   "devDependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.2",
     "autoprefixer": "^10.4.20",
     "laravel-vite-plugin": "^1.0.5",
     "postcss": "^8.4.47",
