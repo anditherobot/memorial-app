@@ -11,6 +11,9 @@ use App\Http\Controllers\UploadController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\PhotoController;
+
+// Rate limiting
 
 // Rate limiting
 RateLimiter::for('wish-submit', function (Request $request) {
@@ -103,6 +106,11 @@ Route::middleware('admin.token')->prefix('admin-token')->group(function () {
 });
 
 // Public photo upload
+Route::get('/photos/upload', [PhotoController::class, 'create'])->name('photos.create');
+Route::post('/photos/upload', [PhotoController::class, 'store'])->name('photos.store');
+Route::get('/photos/{photo:uuid}/status', [PhotoController::class, 'status'])->name('photos.status');
+Route::get('/photos/{photo:uuid}/thumb', [PhotoController::class, 'thumb'])->name('photos.thumb');
+
 Route::get('/upload', [UploadController::class, 'show'])->name('upload.show');
 Route::post('/upload', [UploadController::class, 'upload'])
     ->middleware('throttle:uploads')

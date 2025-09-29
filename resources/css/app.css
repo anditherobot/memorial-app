@@ -17,9 +17,9 @@
 @layer components {
   .hero-section {
     background: linear-gradient(135deg,
-      rgba(249, 250, 251, 0.9) 0%,
-      rgba(243, 244, 246, 0.9) 50%,
-      rgba(249, 250, 251, 0.9) 100%
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(250, 250, 250, 0.95) 50%,
+      rgba(255, 255, 255, 0.95) 100%
     );
     position: relative;
   }
@@ -31,8 +31,8 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
-                      radial-gradient(circle at 75% 75%, rgba(168, 85, 247, 0.05) 0%, transparent 50%);
+    background-image: radial-gradient(circle at 25% 25%, rgba(0, 0, 0, 0.03) 0%, transparent 50%),
+                      radial-gradient(circle at 75% 75%, rgba(0, 0, 0, 0.03) 0%, transparent 50%);
     pointer-events: none;
   }
 
@@ -55,7 +55,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(45deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
+    background: linear-gradient(45deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.1));
     opacity: 0;
     transition: opacity 0.3s ease;
     z-index: 1;
@@ -87,7 +87,7 @@
   .update-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    border-color: rgba(99, 102, 241, 0.3);
+    border-color: rgba(0, 0, 0, 0.2);
   }
 
   /* Task tracker UI helpers */
@@ -103,12 +103,12 @@
 
   .section-divider {
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent);
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.2), transparent);
     margin: 3rem 0;
   }
 
   .elegant-title {
-    background: linear-gradient(135deg, #1f2937, #4f46e5);
+    background: linear-gradient(135deg, #000000, #2d2d2d);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

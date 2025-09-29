@@ -14,6 +14,10 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                'gray-850': '#1a1a1a',
+                'gray-950': '#0a0a0a',
+            },
         },
     },
     plugins: [require('@tailwindcss/aspect-ratio')],

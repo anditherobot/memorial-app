@@ -83,10 +83,18 @@ Migrations live in `database/migrations/` and are reversible. Seeders create a d
 - Queue (if switched to async): `php artisan queue:work`
 - Tests: `php artisan test` (unit/feature)
 
+## Agentic Workflow
+
+This project follows an "agentic" development process, where tasks are broken down into stages, and each stage is handled by a specific "agent" persona. This process is defined in `AGENTS.md`.
+
+*   **`AGENTS.md`:** Defines the roles, responsibilities, and handoff criteria for each agent in the development process.
+*   **`STATUS.md`:** Tracks the status of each task in the project.
+*   **`PROMPT_LIBRARY.md`:** A collection of canonical prompts for each agent.
+
 ## Conventions
+
 - Commit tags: `task: <ID>` for task commits; `checkpoint: <stage complete>` at stage handoff.
-- Keep `STATUS.md` updated when tasks start/finish.
-- Keep `PROMPT_LIBRARY.md` in sync if new prompt patterns are added.
+- For more details on the agentic workflow and conventions, see `AGENTS.md`.
 
 ## Minimal Task Map (active)
 - Admin UI polish (sidebar/header/spacing)
@@ -102,4 +110,3 @@ Migrations live in `database/migrations/` and are reversible. Seeders create a d
 - Use small, focused patches. Keep naming descriptive and code compact.
 
 That’s it — this is the high-signal context to get productive fast.
-

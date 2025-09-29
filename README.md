@@ -1,62 +1,84 @@
 # Memorial Website
 
-Single-source agentic project driven by `PRIMORDIAL.md`. Start with Stage 1 (Setup) to scaffold a Laravel 11 app configured for SQLite with Tailwind + Preline, and a base layout ready for HTMX/Alpine/GLightbox.
+This project is a memorial website designed to celebrate the life of a loved one. It provides a space for friends and family to share memories, wishes, and photos. The site is built with Laravel 11, SQLite, and TailwindCSS, and includes a simple admin panel for content moderation.
 
-Quick start
-- Read `PRIMORDIAL.md` to understand the workflow and checkpoints.
-- Follow `docs/SETUP.md` to run Stage 1 bootstrap (Windows or macOS/Linux).
-- Track progress in `STATUS.md` and use the commit tags from `AGENTS.md`.
+## Features
 
-Key files
-- `PRIMORDIAL.md` — Genesis doc: roles, stages, templates, and machine-readable blocks.
-- `AGENTS.md` — Roles, handoffs, working agreements.
-- `STATUS.md` — Task tracking table (todo → in_progress → done).
-- `PROMPT_LIBRARY.md` — Canonical prompts for each agent.
-- `docs/SETUP.md` — Stage 1 instructions + scripts.
+*   **Gallery:** A public gallery of photos and videos.
+*   **Wishwall:** A place for guests to leave messages and wishes.
+*   **Updates:** A section for posting announcements and updates.
+*   **Admin Panel:** A simple admin panel for moderating content, managing uploads, and posting updates.
 
-Dev servers (after Stage 1)
-- Terminal A: `php artisan serve`
-- Terminal B: `npm run dev`
+## Tech Stack
 
-Checkpoints
-- Stage completion messages must include exact tags, e.g., `checkpoint: project setup complete`.
+*   **Backend:** Laravel 11
+*   **Database:** SQLite
+*   **Frontend:** TailwindCSS, Vite, Preline, HTMX/Alpine (via CDN)
+*   **Testing:** Pest (unit/feature), Playwright (visual)
+
+## Getting Started
+
+### Prerequisites
+
+*   PHP
+*   Composer
+*   Node.js 18+
+
+### Installation
+
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/your-username/memorial-website.git
+    cd memorial-website
+    ```
+
+2.  **Install dependencies:**
+    ```bash
+    composer install
+    npm ci
+    ```
+
+3.  **Set up the database:**
+    ```bash
+    touch database/dev.sqlite
+    ```
+
+4.  **Run migrations and seed the database:**
+    ```bash
+    php artisan migrate:fresh --seed
+    ```
+
+5.  **Start the development servers:**
+    *   In one terminal, run:
+        ```bash
+        php artisan serve
+        ```
+    *   In another terminal, run:
+        ```bash
+        npm run dev
+        ```
+
+The application will be available at `http://127.0.0.1:8000`. The admin panel is at `/admin` with default credentials `admin@example.com` / `secret`.
 
 ## Visual UI Checks (Playwright + MCP)
 
-Purpose: quick, deterministic desktop/mobile screenshots for key pages to catch regressions early. One browser (Chromium), two device profiles.
+This project uses Playwright for visual regression testing. The following commands are available:
 
-### One‑time setup
-- Install Node deps: `npm install`
-- Install Playwright browsers: `npm run ui:install`
+*   **Run all visual checks:**
+    ```bash
+    npm run ui:check
+    ```
+*   **Run desktop checks only:**
+    ```bash
+    npm run ui:desk
+    ```
+*   **Run mobile checks only:**
+    ```bash
+    npm run ui:mobile
+    ```
+*   **Update baseline screenshots:**
+    ```bash
+    npm run ui:update
+    ```
 
-### Common commands
-- Run all visuals (desktop + mobile): `npm run ui:check`
-- Desktop only: `npm run ui:desk`
-- Mobile only: `npm run ui:mobile`
-- Update baselines after intentional UI changes: `npm run ui:update`
-
-Notes
-- Tests auto‑start the app in testing mode and run a fresh `migrate:fresh --seed` for determinism.
-- HTML report at `playwright-report/index.html` (created on run).
-
-### Common scenarios covered
-- Public pages render: Home (`/`), Gallery (`/gallery`), Wishwall (`/wishes`), Updates (`/updates`).
-- Updates show: navigate to first seeded update and capture.
-- Admin views: Dashboard, Wishes moderation, Updates index (logs in with seeded admin).
-
-### Quick ad‑hoc screenshot (no test change)
-- Simplest: `npm run mcp:shot -- --url /gallery`
-  - Defaults: captures BOTH desktop and mobile to `mcp-artifacts/gallery.desktop.png` and `mcp-artifacts/gallery.mobile.png`.
-  - Override device: `--device desktop|mobile|both`.
-  - Name prefix: `--name myshot` produces `myshot.desktop.png`/`myshot.mobile.png`.
-  - Output saved under `mcp-artifacts/` (git‑ignored).
-
-### Prompt snippet for agents
-Use this to request a quick screenshot via MCP during reviews:
-
-```
-You are the Testing & CI Agent. Use the MCP Playwright server:
-- goto /gallery (wait for network idle)
-- screenshot both devices (defaults)
-Return the saved paths and any rendering issues.
-```
+For more information on the development process and agentic workflow, please see `AGENTS.md`.

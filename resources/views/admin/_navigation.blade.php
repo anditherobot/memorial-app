@@ -1,81 +1,108 @@
 @php
 $currentRoute = request()->route()->getName();
-$navigationItems = [
+$navigationGroups = [
     [
-        'name' => 'Dashboard',
-        'icon' => '📊',
-        'route' => 'admin.dashboard',
-        'active' => $currentRoute === 'admin.dashboard'
+        'title' => 'Overview',
+        'items' => [
+            [
+                'name' => 'Dashboard',
+                'icon' => '📊',
+                'route' => 'admin.dashboard',
+                'active' => $currentRoute === 'admin.dashboard'
+            ]
+        ]
     ],
     [
-        'name' => 'Memorial Events',
-        'icon' => '📅',
-        'route' => 'memorial.events.index',
-        'active' => str_contains($currentRoute, 'memorial.events')
+        'title' => 'Memorial Content',
+        'items' => [
+            [
+                'name' => 'Events',
+                'icon' => '📅',
+                'route' => 'memorial.events.index',
+                'active' => str_contains($currentRoute, 'memorial.events')
+            ],
+            [
+                'name' => 'Content',
+                'icon' => '📝',
+                'route' => 'memorial.content.index',
+                'active' => str_contains($currentRoute, 'memorial.content')
+            ],
+            [
+                'name' => 'Info',
+                'icon' => '📰',
+                'route' => 'admin.updates.index',
+                'active' => str_contains($currentRoute, 'updates')
+            ]
+        ]
     ],
     [
-        'name' => 'Memorial Content',
-        'icon' => '📝',
-        'route' => 'memorial.content.index',
-        'active' => str_contains($currentRoute, 'memorial.content')
+        'title' => 'Media & Community',
+        'items' => [
+            [
+                'name' => 'Gallery',
+                'icon' => '🖼️',
+                'route' => 'admin.gallery',
+                'active' => str_contains($currentRoute, 'gallery')
+            ],
+            [
+                'name' => 'Wishes & Messages',
+                'icon' => '💌',
+                'route' => 'admin.wishes',
+                'active' => str_contains($currentRoute, 'wishes')
+            ]
+        ]
     ],
     [
-        'name' => 'Wishes & Messages',
-        'icon' => '💌',
-        'route' => 'admin.wishes',
-        'active' => str_contains($currentRoute, 'wishes')
-    ],
-    [
-        'name' => 'Gallery',
-        'icon' => '🖼️',
-        'route' => 'admin.gallery',
-        'active' => str_contains($currentRoute, 'gallery')
-    ],
-    [
-        'name' => 'Updates',
-        'icon' => '📰',
-        'route' => 'admin.updates.index',
-        'active' => str_contains($currentRoute, 'updates')
-    ],
-    [
-        'name' => 'Tasks',
-        'icon' => '📋',
-        'route' => 'admin.tasks.index',
-        'active' => str_contains($currentRoute, 'tasks')
-    ],
-    [
-        'name' => 'Documentation',
-        'icon' => '📚',
-        'route' => 'admin.docs',
-        'active' => str_contains($currentRoute, 'docs')
+        'title' => 'System',
+        'items' => [
+            [
+                'name' => 'Tasks',
+                'icon' => '📋',
+                'route' => 'admin.tasks.index',
+                'active' => str_contains($currentRoute, 'tasks')
+            ],
+            [
+                'name' => 'Documentation',
+                'icon' => '📚',
+                'route' => 'admin.docs',
+                'active' => str_contains($currentRoute, 'docs')
+            ]
+        ]
     ]
 ];
 @endphp
 
-<nav class="flex-1 px-4 py-4 space-y-1">
-  @foreach($navigationItems as $item)
-    @if($item['disabled'] ?? false)
-      <!-- Disabled/Coming Soon Items -->
-      <div class="flex items-center px-3 py-2 text-sm text-gray-400 rounded-md cursor-not-allowed">
-        <span class="mr-3">{{ $item['icon'] }}</span>
-        {{ $item['name'] }}
-        <span class="ml-auto text-xs bg-blue-100 px-2 py-1 rounded text-blue-600">Beta</span>
+<nav class="flex-1 px-4 py-4 space-y-6">
+  @foreach($navigationGroups as $group)
+    <div>
+      <h3 class="px-3 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">{{ $group['title'] }}</h3>
+      <div class="space-y-1">
+        @foreach($group['items'] as $item)
+          @if($item['disabled'] ?? false)
+            <!-- Disabled/Coming Soon Items -->
+            <div class="flex items-center px-3 py-2 text-sm text-gray-400 rounded-md cursor-not-allowed">
+              <span class="mr-3">{{ $item['icon'] }}</span>
+              {{ $item['name'] }}
+              <span class="ml-auto text-xs bg-gray-100 px-2 py-1 rounded text-gray-600">Beta</span>
+            </div>
+          @else
+            <!-- Active Navigation Items -->
+            <a
+              href="{{ route($item['route']) }}"
+              class="flex items-center px-3 py-2 text-sm rounded-md transition-colors
+                {{ $item['active']
+                  ? 'bg-black text-white'
+                  : 'text-gray-700 hover:bg-gray-100'
+                }}"
+              @if(isset($item['active']) && $item['active']) aria-current="page" @endif
+            >
+              <span class="mr-3">{{ $item['icon'] }}</span>
+              {{ $item['name'] }}
+            </a>
+          @endif
+        @endforeach
       </div>
-    @else
-      <!-- Active Navigation Items -->
-      <a
-        href="{{ route($item['route']) }}"
-        class="flex items-center px-3 py-2 text-sm rounded-md transition-colors
-          {{ $item['active']
-            ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
-            : 'text-gray-700 hover:bg-gray-100'
-          }}"
-        @if(isset($item['active']) && $item['active']) aria-current="page" @endif
-      >
-        <span class="mr-3">{{ $item['icon'] }}</span>
-        {{ $item['name'] }}
-      </a>
-    @endif
+    </div>
   @endforeach
 </nav>
 
@@ -95,7 +122,7 @@ $navigationItems = [
       class="flex items-center px-3 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100 transition-colors"
     >
       <span class="mr-3">✍️</span>
-      New Update
+      New Info
     </a>
     <a
       href="{{ route('home') }}"
