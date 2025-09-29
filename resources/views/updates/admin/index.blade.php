@@ -25,25 +25,32 @@
 
     <div class="bg-white border rounded divide-y">
       @forelse($posts as $post)
-        <div class="p-4 flex items-start gap-4 hover:bg-gray-50 transition-colors">
-          @php $cover = $post->media()->with('derivatives')->first(); $thumb = optional($cover?->derivatives->first()); @endphp
-          @if($cover)
-            <img src="{{ Storage::disk('public')->url(($thumb?->storage_path) ?? $cover->storage_path) }}" class="w-24 h-24 object-cover rounded" alt="cover" />
-          @else
-            <div class="w-24 h-24 bg-gray-100 rounded grid place-items-center text-gray-400 text-xs">No image</div>
-          @endif
+        <div class="relative">
+          <a href="{{ route('admin.updates.edit', $post) }}" class="block p-4 hover:bg-gray-50 transition-colors">
+            <div class="flex items-start gap-4">
+              @php $cover = $post->media()->with('derivatives')->first(); $thumb = optional($cover?->derivatives->first()); @endphp
+              @if($cover)
+                <img src="{{ Storage::disk('public')->url(($thumb?->storage_path) ?? $cover->storage_path) }}" class="w-24 h-24 object-cover rounded" alt="cover" />
+              @else
+                <div class="w-24 h-24 bg-gray-100 rounded grid place-items-center text-gray-400 text-xs">No image</div>
+              @endif
 
-          <div class="flex-1 min-w-0 cursor-pointer" onclick="window.location='{{ route('admin.updates.edit', $post) }}'">
-            <div class="font-semibold">{{ $post->title }}</div>
-            <div class="text-xs text-gray-500">Published: {{ $post->is_published ? 'Yes' : 'No' }} {{ $post->published_at ? '('.$post->published_at->toDayDateTimeString().')' : '' }}</div>
-          </div>
+              <div class="flex-1 min-w-0">
+                <div class="font-semibold">{{ $post->title }}</div>
+                <div class="text-xs text-gray-500">Published: {{ $post->is_published ? 'Yes' : 'No' }} {{ $post->published_at ? '('.$post->published_at->toDayDateTimeString().')' : '' }}</div>
+              </div>
 
-          <div class="flex items-center gap-2 flex-shrink-0">
-            <a href="{{ route('admin.updates.edit', $post) }}" class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded text-sm hover:bg-gray-50 transition-colors">Edit</a>
+              <div class="flex items-center gap-2 flex-shrink-0">
+                <span class="px-3 py-1.5 border border-gray-300 text-gray-700 rounded text-sm">Edit</span>
+              </div>
+            </div>
+          </a>
+
+          <div class="absolute top-4 right-4 z-10">
             <form method="POST" action="{{ route('admin.updates.destroy', $post) }}" onsubmit="return confirm('Delete this post?')" class="inline">
               @csrf
               @method('DELETE')
-              <button class="px-3 py-1.5 border border-red-300 text-red-700 rounded text-sm hover:bg-red-50 transition-colors">Delete</button>
+              <button class="px-3 py-1.5 border border-red-300 text-red-700 rounded text-sm hover:bg-red-50 transition-colors" onclick="event.stopPropagation()">Delete</button>
             </form>
           </div>
         </div>

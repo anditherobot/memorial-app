@@ -1,0 +1,49 @@
+import { defineConfig } from '@playwright/test';
+
+const APP_URL = process.env.APP_URL || 'http://127.0.0.1:8000';
+
+export default defineConfig({
+  testDir: 'tests/e2e',
+  globalSetup: require.resolve('./tests/e2e/global-setup'),
+  fullyParallel: false,
+  timeout: 60_000,
+  expect: {
+    timeout: 10_000,
+  },
+  reporter: [['list'], ['html', { open: 'never' }]],
+  use: {
+    baseURL: APP_URL,
+    screenshot: 'only-on-failure',
+    video: 'off',
+    trace: 'retain-on-failure',
+    colorScheme: 'light',
+    reducedMotion: 'reduce',
+    viewport: { width: 1280, height: 800 },
+  },
+  snapshotPathTemplate: '{testDir}/__screenshots__/{projectName}/{arg}{ext}',
+  webServer: {
+    command: 'php artisan serve --env=testing --host=127.0.0.1 --port=8000',
+    url: APP_URL,
+    reuseExistingServer: true,
+    timeout: 120_000,
+  },
+  projects: [
+    {
+      name: 'chromium-desktop',
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 1280, height: 800 },
+        userAgent: undefined,
+      },
+    },
+    {
+      name: 'chromium-mobile',
+      use: {
+        browserName: 'chromium',
+        viewport: { width: 390, height: 844 },
+        userAgent:
+          'Mozilla/5.0 (Linux; Android 12; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
+      },
+    },
+  ],
+});

@@ -42,6 +42,14 @@ phpunit.xml
 Homestead.json
 Homestead.yaml
 
+# Playwright artifacts
+playwright-report/
+test-results/
+tests/e2e/__screenshots__/**/.last-run
+
+# MCP artifacts
+mcp-artifacts/
+
 # IDE/editor
 /.fleet
 /.idea

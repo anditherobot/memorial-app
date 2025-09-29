@@ -192,3 +192,27 @@ Definition of Done:
 - Test runs green locally and in CI pipeline.
 ```
 
+---
+
+## TEMPLATE-MCP-001 — Ad‑hoc Screenshot via MCP
+
+Inputs
+- `route`: e.g., `/gallery`
+- `device`: `desktop` or `mobile` (default `desktop`)
+- `name?`: output filename (default derived from route and device)
+
+Acceptance
+- Screenshot saved under `mcp-artifacts/` and reflects current UI.
+
+Prompt
+```
+You are the Testing & CI Agent. Use the MCP Playwright server to capture a screenshot for quick UI review.
+
+Task:
+- Navigate to {route} and wait for network idle.
+- Take a full‑page screenshot on {device}.
+- Save it as {name} (if provided) or use a route‑based default.
+
+Report back:
+- Path to the saved file and any notable rendering issues.
+```

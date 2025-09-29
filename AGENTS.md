@@ -92,3 +92,33 @@ Each stage ends with a checkpoint commit using the exact tag from `PRIMORDIAL.md
 
 Agents must update the task row in `STATUS.md` when state changes.
 
+---
+
+## Playwright + MCP — Quick Reference
+
+Purpose: When a human says “playwright analyze page and do action”, agents should use the simplest matching command.
+
+Defaults
+- One browser (Chromium). Two devices: desktop (1280×800) and mobile (390×844).
+- Test server: `php artisan serve --env=testing` is auto‑started by Playwright tests; for MCP shots, start it with `npm run serve:test` if not already running.
+- MCP shots default to BOTH devices and save to `mcp-artifacts/`.
+
+Common Intents → Commands
+- “Run visual checks” → `npm run ui:check`
+- “Desktop visuals only” → `npm run ui:desk`
+- “Mobile visuals only” → `npm run ui:mobile`
+- “Update visual baselines” → `npm run ui:update`
+- “Screenshot/analyze page /gallery” → `npm run mcp:shot -- --url /gallery`
+  - Options: `--device desktop|mobile|both` (default `both`), `--name gallery`, `--base http://127.0.0.1:8000`.
+
+Action Flows
+- If the request involves clicks/fills/navigation (beyond a static shot), add or extend a Playwright spec under `tests/e2e/` and include `expect(page).toHaveScreenshot()` at key checkpoints. Then run `npm run ui:check`.
+- For ad‑hoc interactive tours via MCP, prefer Playwright tests until the MCP tour tool is introduced.
+
+Outputs
+- Reports: `playwright-report/` (HTML).
+- Baselines: `tests/e2e/__screenshots__/`.
+- MCP artifacts: `mcp-artifacts/` (git‑ignored).
+
+Acceptance
+- Visual suite green locally and in CI. MCP shots produce the expected files with seeded data.

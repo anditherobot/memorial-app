@@ -5,9 +5,18 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview --port 5173 --strictPort"
+    "preview": "vite preview --port 5173 --strictPort",
+    "ui:install": "playwright install",
+    "ui:check": "playwright test -c ./playwright.config.ts",
+    "ui:desk": "playwright test -c ./playwright.config.ts -g desktop",
+    "ui:mobile": "playwright test -c ./playwright.config.ts -g mobile",
+    "ui:update": "PLAYWRIGHT_UPDATE_SNAPSHOTS=1 playwright test -c ./playwright.config.ts",
+    "serve:test": "php artisan serve --env=testing --host=127.0.0.1 --port=8000",
+    "mcp:dev": "node ./mcp/playwright-server.mjs",
+    "mcp:shot": "node ./mcp/playwright-server.mjs shot"
   },
   "devDependencies": {
+    "@playwright/test": "^1.48.0",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "autoprefixer": "^10.4.20",
     "laravel-vite-plugin": "^1.0.5",
