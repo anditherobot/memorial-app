@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BulkUploadRequest;
-use App\Jobs\ProcessUploadedImage;
+use App\Jobs\ProcessImageOptimization;
+use App\Models\Media;
 use App\Models\Photo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -20,14 +21,20 @@ class PhotoController extends Controller
         try {
             $uuids = [];
             foreach ($request->file('images') as $file) {
-                $path = $file->store('photos/' . now()->format('Y/m'), 'local');
+                $media = Media::create([
+                    'original_filename' => $file->getClientOriginalName(),
+                    'mime_type' => $file->getMimeType(),
+                    'size_bytes' => $file->getSize(),
+                    'storage_path' => $file->store('media/' . now()->format('Y/m'), 's3_private'),
+                    'is_public' => false,
+                ]);
+
                 $photo = Photo::create([
                     'user_id' => auth()->id(),
-                    'original_path' => $path,
-                    'mime_type' => $file->getMimeType(),
-                    'size' => $file->getSize(),
+                    'media_id' => $media->id,
                 ]);
-                ProcessUploadedImage::dispatch($photo);
+
+                ProcessImageOptimization::dispatch($media);
                 $uuids[] = $photo->uuid;
             }
 
@@ -44,27 +51,18 @@ class PhotoController extends Controller
             abort(403);
         }
 
+        $thumbUrl = null;
+        if ($photo->status === 'ready' && $photo->media) {
+            $thumbnailDerivative = $photo->media->derivatives()->where('type', 'thumbnail')->first();
+            if ($thumbnailDerivative) {
+                $thumbUrl = Storage::disk($thumbnailDerivative->disk)->url($thumbnailDerivative->storage_path);
+            }
+        }
+
         return response()->json([
             'status' => $photo->status,
             'error' => $photo->error_message,
-            'thumb_url' => $photo->status === 'ready' ? route('photos.thumb', $photo) : null,
+            'thumb_url' => $thumbUrl,
         ]);
-    }
-
-    public function thumb(Photo $photo)
-    {
-        // Ensure user can only view their own photos
-        if ($photo->user_id !== auth()->id()) {
-            abort(403);
-        }
-
-        $path = $photo->variants['thumb'] ?? $photo->display_path ?? $photo->original_path;
-
-        if (!Storage::disk('local')->exists($path)) {
-            abort(404);
-        }
-
-        return Storage::response($path)
-            ->header('Cache-Control', 'public, max-age=2592000, immutable');
     }
 }

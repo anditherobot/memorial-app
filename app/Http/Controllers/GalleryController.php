@@ -8,6 +8,7 @@ class GalleryController extends Controller
 {
     public function index()
     {
+        // Get all images - same as admin gallery
         $images = Media::query()
             ->where('mime_type', 'like', 'image/%')
             ->latest()

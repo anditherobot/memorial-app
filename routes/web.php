@@ -50,6 +50,7 @@ Route::middleware(['auth','admin'])->prefix('admin')->group(function () {
     // Gallery management
     Route::get('/gallery', [\App\Http\Controllers\AdminGalleryController::class, 'index'])->name('admin.gallery');
     Route::post('/gallery/upload', [\App\Http\Controllers\AdminGalleryController::class, 'upload'])->name('admin.gallery.upload');
+    Route::post('/gallery/optimize', [\App\Http\Controllers\AdminGalleryController::class, 'optimize'])->name('admin.gallery.optimize');
     Route::delete('/media/{media}', [\App\Http\Controllers\AdminGalleryController::class, 'destroy'])->name('admin.media.destroy');
 
     // Updates management

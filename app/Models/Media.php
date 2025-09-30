@@ -15,7 +15,6 @@ class Media extends Model
         'size_bytes',
         'width',
         'height',
-        'duration_seconds',
         'hash',
         'storage_path',
         'is_public',
@@ -30,18 +29,9 @@ class Media extends Model
         return $this->hasMany(MediaDerivative::class);
     }
 
-    public function posts()
+    public function photo()
     {
-        return $this->morphedByMany(Post::class, 'attachable', 'media_attachables')
-            ->withPivot(['role', 'sort_order'])
-            ->withTimestamps();
-    }
-
-    public function wishes()
-    {
-        return $this->morphedByMany(Wish::class, 'attachable', 'media_attachables')
-            ->withPivot(['role', 'sort_order'])
-            ->withTimestamps();
+        return $this->hasOne(Photo::class);
     }
 }
 

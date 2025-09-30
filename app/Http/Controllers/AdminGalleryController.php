@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ProcessImageOptimization;
 use App\Models\Media;
 use App\Models\MediaDerivative;
 use App\Models\Photo;
@@ -30,63 +31,107 @@ class AdminGalleryController extends Controller
 
     public function upload(Request $request)
     {
+        // Support both 'photos' and 'file' parameter names
+        $inputName = $request->has('photos') ? 'photos' : 'file';
+
         $validated = $request->validate([
-            'file' => ['required', 'array'],
-            'file.*' => ['required', 'file', 'max:51200', 'mimetypes:image/jpeg,image/png,image/webp,image/gif,image/svg+xml'],
+            $inputName => ['required', 'array'],
+            $inputName.'.*' => ['required', 'file', 'max:10240', 'mimes:jpeg,jpg,png,gif,webp,heic'],
+        ], [
+            $inputName.'.required' => 'Please select at least one file to upload.',
+            $inputName.'.*.max' => 'Each file must not exceed 10MB.',
+            $inputName.'.*.mimes' => 'Only image files (JPEG, PNG, GIF, WEBP, HEIC) are allowed.',
         ]);
 
         $uploadedCount = 0;
+        $failedFiles = [];
 
-        foreach ($validated['file'] as $file) {
-            $path = $file->storeAs('media/originals', Str::uuid()->toString().'_'.$file->getClientOriginalName(), 'public');
+        foreach ($validated[$inputName] as $file) {
+            try {
+                $path = $file->storeAs('media/originals', Str::uuid()->toString().'_'.$file->getClientOriginalName(), 'public');
 
-            $mime = $file->getMimeType();
-            $width = null; $height = null; $duration = null;
-            if (str_starts_with($mime, 'image/')) {
-                try {
-                    $manager = new ImageManager(new GdDriver());
-                    $image = $manager->read($file->getRealPath());
-                    $width = $image->width();
-                    $height = $image->height();
-                } catch (\Throwable $e) {
-                    // ignore; keep nulls
+                $mime = $file->getMimeType();
+                $width = null; $height = null; $duration = null;
+
+                if (str_starts_with($mime, 'image/')) {
+                    try {
+                        $manager = new ImageManager(new GdDriver());
+                        $image = $manager->read($file->getRealPath());
+                        $width = $image->width();
+                        $height = $image->height();
+                    } catch (\Throwable $e) {
+                        \Log::warning('Failed to read image dimensions: ' . $e->getMessage(), [
+                            'file' => $file->getClientOriginalName()
+                        ]);
+                    }
                 }
-            }
 
-            $media = Media::create([
-                'original_filename' => $file->getClientOriginalName(),
-                'mime_type' => $mime,
-                'size_bytes' => $file->getSize(),
-                'width' => $width,
-                'height' => $height,
-                'duration_seconds' => $duration,
-                'hash' => hash_file('sha256', $file->getRealPath()),
-                'storage_path' => $path,
-                'is_public' => false, // Admin uploads are not public by default
-            ]);
+                $media = Media::create([
+                    'original_filename' => $file->getClientOriginalName(),
+                    'mime_type' => $mime,
+                    'size_bytes' => $file->getSize(),
+                    'width' => $width,
+                    'height' => $height,
+                    'duration_seconds' => $duration,
+                    'hash' => hash_file('sha256', $file->getRealPath()),
+                    'storage_path' => $path,
+                    'is_public' => false, // Admin uploads are not public by default
+                ]);
 
-            // Generate a thumbnail for images
-            if (str_starts_with($mime, 'image/')) {
-                try {
-                    $manager = new ImageManager(new GdDriver());
-                    $image = $manager->read($file->getRealPath());
-                    $image = $image->scale(width: 800, height: null);
-                    $thumbPath = 'media/derivatives/'.$media->id.'/thumb.jpg';
-                    Storage::disk('public')->put($thumbPath, (string) $image->toJpeg(quality: 80));
-
-                    MediaDerivative::updateOrCreate(
-                        ['media_id' => $media->id, 'type' => 'thumbnail', 'storage_path' => $thumbPath],
-                        ['width' => $image->width(), 'height' => $image->height(), 'size_bytes' => Storage::disk('public')->size($thumbPath)]
-                    );
-                } catch (\Throwable $e) {
-                    // silently ignore
+                // Dispatch job to generate derivatives
+                if (str_starts_with($mime, 'image/')) {
+                    ProcessImageOptimization::dispatch($media);
                 }
-            }
 
-            $uploadedCount++;
+                $uploadedCount++;
+            } catch (\Throwable $e) {
+                \Log::error('Failed to upload file: ' . $e->getMessage(), [
+                    'file' => $file->getClientOriginalName(),
+                    'error' => $e->getMessage()
+                ]);
+                $failedFiles[] = $file->getClientOriginalName();
+            }
         }
 
-        $message = $uploadedCount === 1 ? 'Image uploaded.' : "{$uploadedCount} images uploaded.";
+        // Determine the appropriate message and type
+        if ($uploadedCount > 0 && count($failedFiles) === 0) {
+            $message = $uploadedCount === 1 ? 'Image uploaded successfully!' : "Successfully uploaded {$uploadedCount} images!";
+            return redirect()->route('admin.gallery')->with('status', $message);
+        } elseif ($uploadedCount > 0 && count($failedFiles) > 0) {
+            $message = "Uploaded {$uploadedCount} image(s). Failed: " . implode(', ', $failedFiles);
+            return redirect()->route('admin.gallery')->with('warning', $message);
+        } else {
+            $message = 'All uploads failed. Failed files: ' . implode(', ', $failedFiles);
+            return redirect()->route('admin.gallery')->with('error', $message);
+        }
+    }
+
+    public function optimize(Request $request)
+    {
+        $validated = $request->validate([
+            'media_ids' => ['required', 'array'],
+            'media_ids.*' => ['required', 'integer', 'exists:media,id'],
+        ]);
+
+        $dispatchedCount = 0;
+        foreach ($mediaIds as $mediaId) {
+            $media = Media::find($mediaId);
+
+            if (!$media || !str_starts_with($media->mime_type, 'image/')) {
+                continue;
+            }
+
+            // Skip if already optimized
+            if ($media->derivatives()->where('type', 'web-optimized')->exists()) {
+                continue;
+            }
+
+            ProcessImageOptimization::dispatch($media);
+            $dispatchedCount++;
+        }
+
+        $message = "Optimization job dispatched for {$dispatchedCount} image(s). They will be processed in the background.";
+
         return redirect()->route('admin.gallery')->with('status', $message);
     }
 

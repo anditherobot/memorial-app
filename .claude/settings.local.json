@@ -22,7 +22,12 @@
       "Bash(git remote add:*)",
       "Bash(sqlite3:*)",
       "Bash(find:*)",
-      "Bash(git show:*)"
+      "Bash(git show:*)",
+      "Bash(npx playwright test:*)",
+      "Bash(for url in \"http://localhost:8000/storage/media/derivatives/27/thumb.jpg\" \"http://localhost:8000/storage/media/derivatives/26/thumb.jpg\" \"http://localhost:8000/storage/media/fdde0669-0e15-38eb-a6a1-fde60d94c8e3.jpg\")",
+      "Bash(do echo \"Testing: $url\")",
+      "Bash(done)",
+      "Bash(for url in \"http://localhost:8000/storage/media/derivatives/27/thumb.jpg\" \"http://localhost:8000/storage/media/derivatives/26/thumb.jpg\" \"http://localhost:8000/storage/media/derivatives/25/thumb.jpg\")"
     ],
     "deny": [],
     "ask": []

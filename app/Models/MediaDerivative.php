@@ -10,7 +10,7 @@ class MediaDerivative extends Model
     use HasFactory;
 
     protected $fillable = [
-        'media_id', 'type', 'storage_path', 'width', 'height', 'size_bytes'
+        'media_id', 'type', 'storage_path', 'width', 'height', 'size_bytes', 'disk', 'mime_type'
     ];
 
     public function media()

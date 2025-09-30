@@ -12,19 +12,9 @@ class Photo extends Model
 
     protected $fillable = [
         'user_id',
-        'original_path',
-        'display_path',
-        'mime_type',
-        'size',
-        'width',
-        'height',
-        'variants',
+        'media_id',
         'status',
         'error_message',
-    ];
-
-    protected $casts = [
-        'variants' => 'array',
     ];
 
     protected static function boot()
@@ -42,6 +32,14 @@ class Photo extends Model
     public function user()
     {
         return $this->belongsTo(\App\Models\User::class);
+    }
+
+    /**
+     * Get the media associated with the photo.
+     */
+    public function media()
+    {
+        return $this->belongsTo(Media::class);
     }
 
     /**

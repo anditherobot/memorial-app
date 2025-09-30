@@ -21,9 +21,8 @@ abstract class TestCase extends BaseTestCase
             'prefix'   => '',
         ]);
 
-        $app->register(\Intervention\Image\ImageServiceProvider::class);
+        $app->register(\Intervention\Image\Laravel\ServiceProvider::class);
         $app->boot();
-        $app->make(\Illuminate\Foundation\AliasLoader::class)->alias('Image', \Intervention\Image\Facades\Image::class);
 
         return $app;
     }

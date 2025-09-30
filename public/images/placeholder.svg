@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#e5e7eb"/>
+  <g transform="translate(200, 150)">
+    <svg viewBox="0 0 24 24" x="-40" y="-40" width="80" height="80" fill="#9ca3af">
+      <path d="M4 5h16c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1H4c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1zm16 2H4v10h16V7zm-3.5 6l-2.25-3-2.75 3.51-2-2.5L7 14h10l-2.5-3z"/>
+    </svg>
+  </g>
+  <text x="200" y="240" font-family="Arial, sans-serif" font-size="16" fill="#6b7280" text-anchor="middle">
+    Image not found
+  </text>
+</svg>

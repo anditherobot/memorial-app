@@ -1,10 +1,15 @@
 import { defineConfig } from '@playwright/test';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const APP_URL = process.env.APP_URL || 'http://127.0.0.1:8000';
 
 export default defineConfig({
   testDir: 'tests/e2e',
-  globalSetup: require.resolve('./tests/e2e/global-setup'),
+  globalSetup: resolve(__dirname, './tests/e2e/global-setup.ts'),
   fullyParallel: false,
   timeout: 60_000,
   expect: {
