@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Media;
 use App\Models\MediaDerivative;
+use App\Models\Photo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -19,62 +20,74 @@ class AdminGalleryController extends Controller
             ->latest()
             ->paginate(24);
 
-        return view('admin.gallery', compact('images'));
+        $photos = Photo::query()
+            ->where('status', 'completed')
+            ->latest()
+            ->get();
+
+        return view('admin.gallery', compact('images', 'photos'));
     }
 
     public function upload(Request $request)
     {
         $validated = $request->validate([
-            'file' => ['required', 'file', 'max:51200', 'mimetypes:image/jpeg,image/png,image/webp,image/gif,image/svg+xml'],
+            'file' => ['required', 'array'],
+            'file.*' => ['required', 'file', 'max:51200', 'mimetypes:image/jpeg,image/png,image/webp,image/gif,image/svg+xml'],
         ]);
 
-        $file = $validated['file'];
-        $path = $file->storeAs('media/originals', Str::uuid()->toString().'_'.$file->getClientOriginalName(), 'public');
+        $uploadedCount = 0;
 
-        $mime = $file->getMimeType();
-        $width = null; $height = null; $duration = null;
-        if (str_starts_with($mime, 'image/')) {
-            try {
-                $manager = new ImageManager(new GdDriver());
-                $image = $manager->read($file->getRealPath());
-                $width = $image->width();
-                $height = $image->height();
-            } catch (\Throwable $e) {
-                // ignore; keep nulls
+        foreach ($validated['file'] as $file) {
+            $path = $file->storeAs('media/originals', Str::uuid()->toString().'_'.$file->getClientOriginalName(), 'public');
+
+            $mime = $file->getMimeType();
+            $width = null; $height = null; $duration = null;
+            if (str_starts_with($mime, 'image/')) {
+                try {
+                    $manager = new ImageManager(new GdDriver());
+                    $image = $manager->read($file->getRealPath());
+                    $width = $image->width();
+                    $height = $image->height();
+                } catch (\Throwable $e) {
+                    // ignore; keep nulls
+                }
             }
+
+            $media = Media::create([
+                'original_filename' => $file->getClientOriginalName(),
+                'mime_type' => $mime,
+                'size_bytes' => $file->getSize(),
+                'width' => $width,
+                'height' => $height,
+                'duration_seconds' => $duration,
+                'hash' => hash_file('sha256', $file->getRealPath()),
+                'storage_path' => $path,
+                'is_public' => false, // Admin uploads are not public by default
+            ]);
+
+            // Generate a thumbnail for images
+            if (str_starts_with($mime, 'image/')) {
+                try {
+                    $manager = new ImageManager(new GdDriver());
+                    $image = $manager->read($file->getRealPath());
+                    $image = $image->scale(width: 800, height: null);
+                    $thumbPath = 'media/derivatives/'.$media->id.'/thumb.jpg';
+                    Storage::disk('public')->put($thumbPath, (string) $image->toJpeg(quality: 80));
+
+                    MediaDerivative::updateOrCreate(
+                        ['media_id' => $media->id, 'type' => 'thumbnail', 'storage_path' => $thumbPath],
+                        ['width' => $image->width(), 'height' => $image->height(), 'size_bytes' => Storage::disk('public')->size($thumbPath)]
+                    );
+                } catch (\Throwable $e) {
+                    // silently ignore
+                }
+            }
+
+            $uploadedCount++;
         }
 
-        $media = Media::create([
-            'original_filename' => $file->getClientOriginalName(),
-            'mime_type' => $mime,
-            'size_bytes' => $file->getSize(),
-            'width' => $width,
-            'height' => $height,
-            'duration_seconds' => $duration,
-            'hash' => hash_file('sha256', $file->getRealPath()),
-            'storage_path' => $path,
-            'is_public' => false, // Admin uploads are not public by default
-        ]);
-
-        // Generate a thumbnail for images
-        if (str_starts_with($mime, 'image/')) {
-            try {
-                $manager = new ImageManager(new GdDriver());
-                $image = $manager->read($file->getRealPath());
-                $image = $image->scale(width: 800, height: null);
-                $thumbPath = 'media/derivatives/'.$media->id.'/thumb.jpg';
-                Storage::disk('public')->put($thumbPath, (string) $image->toJpeg(quality: 80));
-
-                MediaDerivative::updateOrCreate(
-                    ['media_id' => $media->id, 'type' => 'thumbnail', 'storage_path' => $thumbPath],
-                    ['width' => $image->width(), 'height' => $image->height(), 'size_bytes' => Storage::disk('public')->size($thumbPath)]
-                );
-            } catch (\Throwable $e) {
-                // silently ignore
-            }
-        }
-
-        return redirect()->route('admin.gallery')->with('status', 'Image uploaded.');
+        $message = $uploadedCount === 1 ? 'Image uploaded.' : "{$uploadedCount} images uploaded.";
+        return redirect()->route('admin.gallery')->with('status', $message);
     }
 
     public function destroy(Media $media)
