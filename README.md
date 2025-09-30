@@ -5,6 +5,11 @@ This project is a memorial website designed to celebrate the life of a loved one
 ## Features
 
 *   **Gallery:** A public gallery of photos and videos.
+*   **Image Optimization:** Automatic image optimization on upload
+    - Thumbnails: <200KB for fast grid loading
+    - Web-optimized: <2MB for lightbox viewing
+    - Originals preserved for downloads
+    - Shows file size savings in UI
 *   **Wishwall:** A place for guests to leave messages and wishes.
 *   **Updates:** A section for posting announcements and updates.
 *   **Admin Panel:** A simple admin panel for moderating content, managing uploads, and posting updates.
@@ -49,16 +54,22 @@ This project is a memorial website designed to celebrate the life of a loved one
     ```
 
 5.  **Start the development servers:**
-    *   In one terminal, run:
+    *   **Terminal 1** - Laravel server:
         ```bash
         php artisan serve
         ```
-    *   In another terminal, run:
+    *   **Terminal 2** - Vite dev server:
         ```bash
         npm run dev
         ```
+    *   **Terminal 3** - Queue worker (REQUIRED for image optimization):
+        ```bash
+        php artisan queue:work
+        ```
 
 The application will be available at `http://127.0.0.1:8000`. The admin panel is at `/admin` with default credentials `admin@example.com` / `secret`.
+
+> **⚠️ IMPORTANT:** The queue worker (Terminal 3) **must be running** for image optimization to work. Without it, uploaded images will not be optimized and will stay as "Not Optimized". See [`docs/QUEUE_WORKER_SETUP.md`](docs/QUEUE_WORKER_SETUP.md) for details.
 
 ## Visual UI Checks (Playwright + MCP)
 
@@ -82,3 +93,29 @@ This project uses Playwright for visual regression testing. The following comman
     ```
 
 For more information on the development process and agentic workflow, please see `AGENTS.md`.
+
+## Documentation
+
+### Image Optimization
+- **[Queue Worker Setup](docs/QUEUE_WORKER_SETUP.md)** - Critical setup guide for queue worker
+- **[Optimization Flow](docs/OPTIMIZATION_FLOW.md)** - How image optimization works
+- **[Testing Guide](TESTING_GUIDE.md)** - Complete testing scenarios
+- **[Implementation Status](docs/IMPLEMENTATION_STATUS.md)** - Current feature status
+
+### Development
+- **[DEV_LOG.md](DEV_LOG.md)** - Development history and changes
+- **[AGENTS.md](AGENTS.md)** - Agentic workflow documentation
+
+### Key Points
+
+**Image Optimization:**
+- Automatic on upload (queue-based)
+- Creates 2 derivatives: thumbnail (<200KB) + web-optimized (<2MB)
+- Originals preserved for downloads
+- UI shows before/after file sizes
+- Requires queue worker: `php artisan queue:work`
+
+**Testing:**
+- PHPUnit: `php artisan test` (9 optimization tests)
+- Playwright: `npx playwright test` (E2E tests)
+- Visual regression: `npm run ui:check`

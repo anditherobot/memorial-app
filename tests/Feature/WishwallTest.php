@@ -10,6 +10,11 @@ class WishwallTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+    }
+
     public function test_wishwall_submission_creates_pending_record(): void
     {
         $payload = [
@@ -18,7 +23,10 @@ class WishwallTest extends TestCase
             'website' => '', // honeypot empty
         ];
 
-        $response = $this->withHeader('HX-Request', 'true')->post('/wishes', $payload);
+        $response = $this->withHeaders([
+            'HX-Request' => 'true',
+            'X-CSRF-TOKEN' => csrf_token(),
+        ])->post('/wishes', $payload);
 
         $response->assertOk(); // partial returned for HTMX
         $this->assertDatabaseHas('wishes', [
@@ -50,14 +58,18 @@ class WishwallTest extends TestCase
     public function test_rate_limit_on_submit(): void
     {
         for ($i = 0; $i < 5; $i++) {
-            $this->post('/wishes', [
+            $this->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+            ])->post('/wishes', [
                 'name' => 'User '.$i,
                 'message' => 'Hello '.$i,
                 'website' => '',
             ])->assertStatus(302)->assertSessionHas('status');
         }
 
-        $this->post('/wishes', [
+        $this->withHeaders([
+            'X-CSRF-TOKEN' => csrf_token(),
+        ])->post('/wishes', [
             'name' => 'User 6',
             'message' => 'Hello 6',
             'website' => '',

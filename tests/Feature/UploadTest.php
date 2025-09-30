@@ -2,8 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Jobs\GeneratePoster;
-use App\Jobs\ProcessImage;
+use App\Jobs\ProcessImageOptimization;
 use App\Models\Media;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -15,14 +14,21 @@ class UploadTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+    }
+
     public function test_json_upload_endpoint_accepts_image_and_dispatches_processing(): void
     {
-        Storage::fake('public');
+        Storage::fake('s3_private');
         Bus::fake();
 
         $file = UploadedFile::fake()->image('photo.jpg', 800, 600);
 
-        $res = $this->postJson('/uploads', [
+        $res = $this->withHeaders([
+            'X-CSRF-TOKEN' => csrf_token(),
+        ])->postJson('/uploads', [
             'file' => $file,
         ]);
 
@@ -32,16 +38,18 @@ class UploadTest extends TestCase
         $media = Media::first();
         $this->assertStringStartsWith('image/', $media->mime_type);
 
-        Bus::assertDispatched(ProcessImage::class);
+        Bus::assertDispatched(ProcessImageOptimization::class);
     }
 
     public function test_json_upload_endpoint_rejects_large_files(): void
     {
-        Storage::fake('public');
+        Storage::fake('s3_private');
         // Create a fake file slightly over 50MB (limit is 51200 KB)
         $file = UploadedFile::fake()->create('big.jpg', 52000, 'image/jpeg');
 
-        $this->postJson('/uploads', ['file' => $file])
+        $this->withHeaders([
+            'X-CSRF-TOKEN' => csrf_token(),
+        ])->postJson('/uploads', ['file' => $file])
             ->assertStatus(422);
     }
 }

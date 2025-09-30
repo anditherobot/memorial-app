@@ -45,7 +45,10 @@ class MemorialContentTest extends TestCase
             'content' => 'John Doe was a beloved father, husband, and friend who touched many lives...',
         ];
 
-        $response = $this->post(route('memorial.content.store'), $contentData);
+        $response = $this->actingAs($this->admin)
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+            ])->post(route('memorial.content.store'), $contentData);
 
         $response->assertStatus(302);
         $this->assertDatabaseHas('memorial_content', $contentData);
@@ -68,7 +71,10 @@ class MemorialContentTest extends TestCase
             'content' => 'John David Doe',
         ];
 
-        $response = $this->put(route('memorial.content.update', $content), $updateData);
+        $response = $this->actingAs($this->admin)
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+            ])->put(route('memorial.content.update', $content), $updateData);
 
         $response->assertStatus(302);
         $this->assertDatabaseHas('memorial_content', $updateData);
@@ -81,7 +87,10 @@ class MemorialContentTest extends TestCase
 
         $content = MemorialContent::factory()->create();
 
-        $response = $this->delete(route('memorial.content.destroy', $content));
+        $response = $this->actingAs($this->admin)
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+            ])->delete(route('memorial.content.destroy', $content));
 
         $response->assertStatus(302);
         $this->assertDatabaseMissing('memorial_content', ['id' => $content->id]);
@@ -98,7 +107,10 @@ class MemorialContentTest extends TestCase
             'content' => 'Some content',
         ];
 
-        $response = $this->post(route('memorial.content.store'), $contentData);
+        $response = $this->actingAs($this->admin)
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+            ])->post(route('memorial.content.store'), $contentData);
 
         $response->assertStatus(302);
         $response->assertSessionHasErrors('content_type');
@@ -109,7 +121,10 @@ class MemorialContentTest extends TestCase
     {
         $this->actingAs($this->admin);
 
-        $response = $this->post(route('memorial.content.store'), []);
+        $response = $this->actingAs($this->admin)
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+            ])->post(route('memorial.content.store'), []);
 
         $response->assertStatus(302);
         $response->assertSessionHasErrors(['content_type']);
@@ -143,10 +158,12 @@ class MemorialContentTest extends TestCase
             'content' => 'Different content',
         ];
 
-        $response = $this->post(route('memorial.content.store'), $contentData);
+        $response = $this->actingAs($this->admin)
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+            ])->post(route('memorial.content.store'), $contentData);
 
-        $response->assertStatus(302);
-        $response->assertSessionHasErrors('content_type');
+        $response->assertStatus(302);        $response->assertSessionHasErrors('content_type');
     }
 
     /** @test */
@@ -178,7 +195,10 @@ class MemorialContentTest extends TestCase
             'content' => 'Phone: 555-123-4567',
         ];
 
-        $response = $this->post(route('memorial.content.store'), $contentData);
+        $response = $this->actingAs($this->admin)
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+            ])->post(route('memorial.content.store'), $contentData);
 
         $response->assertStatus(302);
         $this->assertDatabaseHas('memorial_content', $contentData);
@@ -195,7 +215,10 @@ class MemorialContentTest extends TestCase
             'content' => null,
         ];
 
-        $response = $this->post(route('memorial.content.store'), $contentData);
+        $response = $this->actingAs($this->admin)
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+            ])->post(route('memorial.content.store'), $contentData);
 
         $response->assertStatus(302);
         $this->assertDatabaseHas('memorial_content', $contentData);
@@ -215,7 +238,16 @@ class MemorialContentTest extends TestCase
                 'content' => "Content for {$type}",
             ];
 
-            $response = $this->post(route('memorial.content.store'), $contentData);
+            $contentData = [
+                'content_type' => $type,
+                'title' => "Test {$type}",
+                'content' => "Content for {$type}",
+            ];
+
+            $response = $this->actingAs($this->admin)
+                ->withHeaders([
+                    'X-CSRF-TOKEN' => csrf_token(),
+                ])->post(route('memorial.content.store'), $contentData);
             $response->assertStatus(302);
             $this->assertDatabaseHas('memorial_content', $contentData);
         }

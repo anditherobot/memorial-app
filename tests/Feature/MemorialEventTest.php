@@ -54,7 +54,10 @@ class MemorialEventTest extends TestCase
             'notes' => 'Family requests donations to charity in lieu of flowers.',
         ];
 
-        $response = $this->post(route('memorial.events.store'), $eventData);
+        $response = $this->actingAs($this->admin)
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+            ])->post(route('memorial.events.store'), $eventData);
 
         $response->assertStatus(302);
         $this->assertDatabaseHas('memorial_events', $eventData);
@@ -82,7 +85,10 @@ class MemorialEventTest extends TestCase
             'notes' => 'Updated notes',
         ];
 
-        $response = $this->put(route('memorial.events.update', $event), $updateData);
+        $response = $this->actingAs($this->admin)
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+            ])->put(route('memorial.events.update', $event), $updateData);
 
         $response->assertStatus(302);
 
@@ -111,7 +117,10 @@ class MemorialEventTest extends TestCase
 
         $event = MemorialEvent::factory()->create();
 
-        $response = $this->delete(route('memorial.events.destroy', $event));
+        $response = $this->actingAs($this->admin)
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+            ])->delete(route('memorial.events.destroy', $event));
 
         $response->assertStatus(302);
         $this->assertDatabaseMissing('memorial_events', ['id' => $event->id]);
@@ -127,10 +136,12 @@ class MemorialEventTest extends TestCase
             'title' => 'Test Event',
         ];
 
-        $response = $this->post(route('memorial.events.store'), $eventData);
+        $response = $this->actingAs($this->admin)
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+            ])->post(route('memorial.events.store'), $eventData);
 
-        $response->assertStatus(302);
-        $response->assertSessionHasErrors('event_type');
+        $response->assertStatus(302);        $response->assertSessionHasErrors('event_type');
     }
 
     /** @test */
@@ -147,7 +158,10 @@ class MemorialEventTest extends TestCase
             'poster' => $file,
         ];
 
-        $response = $this->post(route('memorial.events.store'), $eventData);
+        $response = $this->actingAs($this->admin)
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+            ])->post(route('memorial.events.store'), $eventData);
 
         $response->assertStatus(302);
 
@@ -179,7 +193,10 @@ class MemorialEventTest extends TestCase
     {
         $this->actingAs($this->admin);
 
-        $response = $this->post(route('memorial.events.store'), []);
+        $response = $this->actingAs($this->admin)
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+            ])->post(route('memorial.events.store'), []);
 
         $response->assertStatus(302);
         $response->assertSessionHasErrors(['event_type', 'title']);
@@ -196,7 +213,10 @@ class MemorialEventTest extends TestCase
             'date' => 'invalid-date',
         ];
 
-        $response = $this->post(route('memorial.events.store'), $eventData);
+        $response = $this->actingAs($this->admin)
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+            ])->post(route('memorial.events.store'), $eventData);
 
         $response->assertStatus(302);
         $response->assertSessionHasErrors('date');
@@ -213,7 +233,10 @@ class MemorialEventTest extends TestCase
             'time' => 'invalid-time',
         ];
 
-        $response = $this->post(route('memorial.events.store'), $eventData);
+        $response = $this->actingAs($this->admin)
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+            ])->post(route('memorial.events.store'), $eventData);
 
         $response->assertStatus(302);
         $response->assertSessionHasErrors('time');
@@ -230,7 +253,10 @@ class MemorialEventTest extends TestCase
             'contact_email' => 'invalid-email',
         ];
 
-        $response = $this->post(route('memorial.events.store'), $eventData);
+        $response = $this->actingAs($this->admin)
+            ->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token(),
+            ])->post(route('memorial.events.store'), $eventData);
 
         $response->assertStatus(302);
         $response->assertSessionHasErrors('contact_email');

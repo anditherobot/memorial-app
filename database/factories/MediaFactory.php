@@ -26,7 +26,6 @@ class MediaFactory extends Factory
             'size_bytes' => $this->faker->numberBetween(50_000, 5_000_000),
             'width' => $isImage ? $this->faker->numberBetween(640, 4096) : null,
             'height' => $isImage ? $this->faker->numberBetween(480, 2160) : null,
-            'duration_seconds' => $isImage ? null : $this->faker->numberBetween(1, 600),
             'hash' => hash('sha256', $this->faker->unique()->uuid()),
             'storage_path' => 'media/' . $this->faker->uuid() . $ext,
             'is_public' => $this->faker->boolean(),

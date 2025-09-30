@@ -19,6 +19,7 @@ class AdminLayoutTest extends TestCase
             'email' => 'admin@test.com',
             'is_admin' => true,
         ]);
+        $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
     }
 
     /** @test */

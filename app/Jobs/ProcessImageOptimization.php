@@ -21,88 +21,112 @@ class ProcessImageOptimization implements ShouldQueue
 
     public function handle(): void
     {
-        if (!str_starts_with($this->media->mime_type, 'image/')) return;
+        if (!str_starts_with($this->media->mime_type, 'image/')) {
+            \Log::warning('ProcessImageOptimization: Not an image', ['media_id' => $this->media->id, 'mime_type' => $this->media->mime_type]);
+            return;
+        }
 
-        $manager = new ImageManager(new GdDriver());
-        $image = $manager->read(Storage::disk('s3_private')->get($this->media->storage_path));
-
-        // Original derivative (private S3)
-        MediaDerivative::updateOrCreate(
-            ['media_id' => $this->media->id, 'type' => 'original'],
-            [
-                'storage_path' => $this->media->storage_path,
-                'disk' => 's3_private',
-                'mime_type' => $this->media->mime_type,
-                'width' => $image->width(),
-                'height' => $image->height(),
-                'size_bytes' => Storage::disk('s3_private')->size($this->media->storage_path),
-            ]
-        );
-
-        // Thumbnail derivative (public S3)
-        $thumbnailImage = clone $image;
-        $thumbnailImage->cover(150, 150);
-        $thumbnailPath = 'media/' . $this->media->id . '/thumbnail.webp';
-        Storage::disk('s3_public')->put($thumbnailPath, (string) $thumbnailImage->toWebp(quality: 80));
-
-        MediaDerivative::updateOrCreate(
-            ['media_id' => $this->media->id, 'type' => 'thumbnail'],
-            [
-                'storage_path' => $thumbnailPath,
-                'disk' => 's3_public',
-                'mime_type' => 'image/webp',
-                'width' => $thumbnailImage->width(),
-                'height' => $thumbnailImage->height(),
-                'size_bytes' => Storage::disk('s3_public')->size($thumbnailPath),
-            ]
-        );
-
-        // Medium derivative (public S3)
-        $mediumImage = clone $image;
-        $mediumImage->scale(width: 600);
-        $mediumPath = 'media/' . $this->media->id . '/medium.webp';
-        Storage::disk('s3_public')->put($mediumPath, (string) $mediumImage->toWebp(quality: 80));
-
-        MediaDerivative::updateOrCreate(
-            ['media_id' => $this->media->id, 'type' => 'medium'],
-            [
-                'storage_path' => $mediumPath,
-                'disk' => 's3_public',
-                'mime_type' => 'image/webp',
-                'width' => $mediumImage->width(),
-                'height' => $mediumImage->height(),
-                'size_bytes' => Storage::disk('s3_public')->size($mediumPath),
-            ]
-        );
-
-        // Large derivative (public S3)
-        $largeImage = clone $image;
-        $largeImage->scale(width: 1200);
-        $largePath = 'media/' . $this->media->id . '/large.webp';
-        Storage::disk('s3_public')->put($largePath, (string) $largeImage->toWebp(quality: 80));
-
-        MediaDerivative::updateOrCreate(
-            ['media_id' => $this->media->id, 'type' => 'large'],
-            [
-                'storage_path' => $largePath,
-                'disk' => 's3_public',
-                'mime_type' => 'image/webp',
-                'width' => $largeImage->width(),
-                'height' => $largeImage->height(),
-                'size_bytes' => Storage::disk('s3_public')->size($largePath),
-            ]
-        );
-
-        // Optional: optimize with spatie/image-optimizer if binaries are available.
         try {
-            if (class_exists(\Spatie\ImageOptimizer\OptimizerChainFactory::class)) {
-                $optimizer = \Spatie\ImageOptimizer\OptimizerChainFactory::create();
-                $optimizer->optimize(Storage::disk('s3_public')->path($thumbnailPath));
-                $optimizer->optimize(Storage::disk('s3_public')->path($mediumPath));
-                $optimizer->optimize(Storage::disk('s3_public')->path($largePath));
+            $manager = new ImageManager(new GdDriver());
+
+            // Read from local public disk
+            $originalPath = Storage::disk('public')->path($this->media->storage_path);
+
+            if (!file_exists($originalPath)) {
+                \Log::error('ProcessImageOptimization: Original file not found', [
+                    'media_id' => $this->media->id,
+                    'path' => $originalPath
+                ]);
+                return;
             }
+
+            $image = $manager->read($originalPath);
+
+            // Ensure derivatives directory exists
+            Storage::disk('public')->makeDirectory('media/derivatives/' . $this->media->id);
+
+            // 1. Thumbnail derivative (800px width for grid display)
+            // Target: Under 200KB
+            $thumbnailImage = clone $image;
+            $thumbnailImage->scale(width: 800);
+            $thumbnailPath = 'media/derivatives/' . $this->media->id . '/thumb.jpg';
+
+            // Try different quality levels to stay under 200KB
+            $thumbnailQuality = 80;
+            $targetSize = 204800; // 200KB
+
+            do {
+                $thumbnailData = (string) $thumbnailImage->toJpeg(quality: $thumbnailQuality);
+                $thumbnailSize = strlen($thumbnailData);
+
+                if ($thumbnailSize <= $targetSize || $thumbnailQuality <= 50) {
+                    Storage::disk('public')->put($thumbnailPath, $thumbnailData);
+                    break;
+                }
+
+                $thumbnailQuality -= 5;
+            } while ($thumbnailQuality >= 50);
+
+            MediaDerivative::updateOrCreate(
+                ['media_id' => $this->media->id, 'type' => 'thumbnail'],
+                [
+                    'storage_path' => $thumbnailPath,
+                    'disk' => 'public',
+                    'mime_type' => 'image/jpeg',
+                    'width' => $thumbnailImage->width(),
+                    'height' => $thumbnailImage->height(),
+                    'size_bytes' => Storage::disk('public')->size($thumbnailPath),
+                ]
+            );
+
+            // 2. Web-optimized derivative (1920px max width for full view/lightbox)
+            // Target: Under 2MB
+            $webOptimizedImage = clone $image;
+            if ($webOptimizedImage->width() > 1920) {
+                $webOptimizedImage->scale(width: 1920);
+            }
+            $webOptimizedPath = 'media/derivatives/' . $this->media->id . '/web-optimized.jpg';
+
+            // Try different quality levels to stay under 2MB
+            $webQuality = 85;
+            $maxSize = 2097152; // 2MB
+
+            do {
+                $webData = (string) $webOptimizedImage->toJpeg(quality: $webQuality);
+                $webSize = strlen($webData);
+
+                if ($webSize <= $maxSize || $webQuality <= 60) {
+                    Storage::disk('public')->put($webOptimizedPath, $webData);
+                    break;
+                }
+
+                $webQuality -= 5;
+            } while ($webQuality >= 60);
+
+            MediaDerivative::updateOrCreate(
+                ['media_id' => $this->media->id, 'type' => 'web-optimized'],
+                [
+                    'storage_path' => $webOptimizedPath,
+                    'disk' => 'public',
+                    'mime_type' => 'image/jpeg',
+                    'width' => $webOptimizedImage->width(),
+                    'height' => $webOptimizedImage->height(),
+                    'size_bytes' => Storage::disk('public')->size($webOptimizedPath),
+                ]
+            );
+
+            \Log::info('ProcessImageOptimization: Completed successfully', [
+                'media_id' => $this->media->id,
+                'derivatives' => ['thumbnail', 'web-optimized']
+            ]);
+
         } catch (\Throwable $e) {
-            // ignore optimization errors
+            \Log::error('ProcessImageOptimization: Failed', [
+                'media_id' => $this->media->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
         }
     }
 }

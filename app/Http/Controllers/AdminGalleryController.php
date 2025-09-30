@@ -114,7 +114,7 @@ class AdminGalleryController extends Controller
         ]);
 
         $dispatchedCount = 0;
-        foreach ($mediaIds as $mediaId) {
+        foreach ($validated['media_ids'] as $mediaId) {
             $media = Media::find($mediaId);
 
             if (!$media || !str_starts_with($media->mime_type, 'image/')) {
@@ -132,7 +132,11 @@ class AdminGalleryController extends Controller
 
         $message = "Optimization job dispatched for {$dispatchedCount} image(s). They will be processed in the background.";
 
-        return redirect()->route('admin.gallery')->with('status', $message);
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'dispatched' => $dispatchedCount
+        ]);
     }
 
     public function destroy(Media $media)

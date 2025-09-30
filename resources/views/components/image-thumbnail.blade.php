@@ -54,17 +54,28 @@
                     <span class="chip bg-gray-100">{{ $media->width }}×{{ $media->height }}</span>
                 @endif
             </div>
-            <div class="flex items-center justify-between text-gray-500">
-                <span>{{ number_format($media->size_bytes / 1024 / 1024, 2) }} MB</span>
-                @php
-                    $webOptimized = $media->derivatives()->where('type', 'web-optimized')->first();
-                @endphp
+            @php
+                $webOptimized = $media->derivatives()->where('type', 'web-optimized')->first();
+                $thumbnail = $media->derivatives()->where('type', 'thumbnail')->first();
+            @endphp
+            <div class="flex items-center justify-between text-gray-500 text-xs">
                 @if($webOptimized)
+                    <div class="flex flex-col">
+                        <span class="text-gray-400 line-through">{{ number_format($media->size_bytes / 1024 / 1024, 2) }} MB</span>
+                        <span class="text-green-700 font-semibold">{{ number_format($webOptimized->size_bytes / 1024 / 1024, 2) }} MB</span>
+                    </div>
                     <span class="text-green-600 font-medium">✓ Optimized</span>
                 @else
+                    <span>{{ number_format($media->size_bytes / 1024 / 1024, 2) }} MB</span>
                     <span class="text-yellow-600 font-medium">✗ Not Optimized</span>
                 @endif
             </div>
+            @if($webOptimized && $thumbnail)
+                <div class="text-xs text-gray-400">
+                    Saved {{ number_format((($media->size_bytes - $webOptimized->size_bytes) / $media->size_bytes) * 100, 0) }}%
+                    (Thumb: {{ number_format($thumbnail->size_bytes / 1024, 0) }} KB)
+                </div>
+            @endif
         </div>
     @endif
 
