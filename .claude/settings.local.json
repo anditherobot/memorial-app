@@ -21,7 +21,8 @@
       "Bash(gh repo create:*)",
       "Bash(git remote add:*)",
       "Bash(sqlite3:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git show:*)"
     ],
     "deny": [],
     "ask": []

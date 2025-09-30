@@ -22,6 +22,7 @@ class PhotoController extends Controller
             foreach ($request->file('images') as $file) {
                 $path = $file->store('photos/' . now()->format('Y/m'), 'local');
                 $photo = Photo::create([
+                    'user_id' => auth()->id(),
                     'original_path' => $path,
                     'mime_type' => $file->getMimeType(),
                     'size' => $file->getSize(),
@@ -32,13 +33,17 @@ class PhotoController extends Controller
 
             return response()->json(['uuids' => $uuids]);
         } catch (\\Exception $e) {
-            dd($e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
     public function status(Photo $photo)
     {
+        // Ensure user can only check their own photos
+        if ($photo->user_id !== auth()->id()) {
+            abort(403);
+        }
+
         return response()->json([
             'status' => $photo->status,
             'error' => $photo->error_message,
@@ -48,12 +53,18 @@ class PhotoController extends Controller
 
     public function thumb(Photo $photo)
     {
+        // Ensure user can only view their own photos
+        if ($photo->user_id !== auth()->id()) {
+            abort(403);
+        }
+
         $path = $photo->variants['thumb'] ?? $photo->display_path ?? $photo->original_path;
 
         if (!Storage::disk('local')->exists($path)) {
             abort(404);
         }
 
-        return response()->file(Storage::disk('local')->path($path));
+        return Storage::response($path)
+            ->header('Cache-Control', 'public, max-age=2592000, immutable');
     }
 }

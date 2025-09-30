@@ -105,11 +105,13 @@ Route::middleware('admin.token')->prefix('admin-token')->group(function () {
     Route::delete('/wishes/{wish}', [WishController::class, 'destroy'])->name('adminToken.wishes.delete');
 });
 
-// Public photo upload
-Route::get('/photos/upload', [PhotoController::class, 'create'])->name('photos.create');
-Route::post('/photos/upload', [PhotoController::class, 'store'])->name('photos.store');
-Route::get('/photos/{photo:uuid}/status', [PhotoController::class, 'status'])->name('photos.status');
-Route::get('/photos/{photo:uuid}/thumb', [PhotoController::class, 'thumb'])->name('photos.thumb');
+// Authenticated photo upload
+Route::middleware('auth')->group(function () {
+    Route::get('/photos/upload', [PhotoController::class, 'create'])->name('photos.create');
+    Route::post('/photos/upload', [PhotoController::class, 'store'])->name('photos.store');
+    Route::get('/photos/{photo:uuid}/status', [PhotoController::class, 'status'])->name('photos.status');
+    Route::get('/photos/{photo:uuid}/thumb', [PhotoController::class, 'thumb'])->name('photos.thumb');
+});
 
 Route::get('/upload', [UploadController::class, 'show'])->name('upload.show');
 Route::post('/upload', [UploadController::class, 'upload'])

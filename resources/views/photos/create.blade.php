@@ -15,7 +15,10 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold mb-8">Upload Photos</h1>
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold">Upload Photos</h1>
+            <p class="text-sm text-gray-600">Logged in as <strong>{{ auth()->user()->name }}</strong></p>
+        </div>
 
         <div x-data="photoUploader()" class="max-w-3xl mx-auto">
             <div class="bg-white p-8 rounded-lg shadow-md">

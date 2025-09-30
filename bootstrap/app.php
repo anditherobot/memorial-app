@@ -16,10 +16,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\AdminOnly::class,
             'Image' => \Intervention\Image\Facades\Image::class,
         ]);
-
-        $middleware->validateCsrfTokens(except: [
-            '/photos/upload',
-        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

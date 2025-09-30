@@ -16,6 +16,9 @@ class ProcessUploadedImage implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $photo;
+    public $tries = 3;
+    public $backoff = 10;
+    public $timeout = 120;
 
     public function __construct(Photo $photo)
     {
@@ -27,38 +30,93 @@ class ProcessUploadedImage implements ShouldQueue
         $this->photo->update(['status' => 'processing']);
 
         try {
-            $image = Image::make(Storage::disk('local')->get($this->photo->original_path));
+            // Check HEIC support if needed
+            $isHeic = in_array($this->photo->mime_type, ['image/heic', 'image/heif']);
+            if ($isHeic) {
+                $heicOk = class_exists(\Imagick::class) &&
+                    (in_array('HEIC', \Imagick::queryFormats('HEIC')) ||
+                     in_array('HEIF', \Imagick::queryFormats('HEIF')));
+
+                if (!$heicOk) {
+                    $this->photo->update([
+                        'status' => 'error',
+                        'error_message' => 'HEIC/HEIF format not supported on this server. Please convert to JPEG or PNG.',
+                    ]);
+                    return;
+                }
+            }
+
+            // Check for decompression bombs
+            $imageData = Storage::disk('local')->get($this->photo->original_path);
+            [$width, $height] = getimagesizefromstring($imageData) ?: [0, 0];
+            if (($width * $height) > 80_000_000) { // 80MP limit
+                $this->photo->update([
+                    'status' => 'error',
+                    'error_message' => 'Image dimensions too large (exceeds 80 megapixel limit).',
+                ]);
+                return;
+            }
+
+            $image = Image::make($imageData);
 
             // Strip EXIF data
             $image->orientate();
             $image->strip();
 
-            // Create display image
+            // Create display image with WebP fallback
             $image->resize(2560, 2560, function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
             });
-            $displayPath = 'photos/' . now()->format('Y/m') . '/' . $this->photo->uuid . '.webp';
-            Storage::disk('local')->put($displayPath, (string) $image->encode('webp', 80));
+
+            try {
+                $displayEncoded = (string) $image->encode('webp', 80);
+                $displayExt = 'webp';
+            } catch (\Throwable $e) {
+                // Fallback to progressive JPEG if WebP encoding fails
+                $displayEncoded = (string) $image->encode('jpg', 82)->interlace();
+                $displayExt = 'jpg';
+            }
+
+            $displayPath = 'photos/' . now()->format('Y/m') . '/' . $this->photo->uuid . '.' . $displayExt;
+            Storage::disk('local')->put($displayPath, $displayEncoded);
 
             // Create variants
             $variants = [];
+
+            // Thumbnail: square crop for consistent grid display
             $thumb = clone $image;
-            $thumb->resize(400, 400, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
-            $thumbPath = 'photos/' . now()->format('Y/m') . '/' . $this->photo->uuid . '_thumb.webp';
-            Storage::disk('local')->put($thumbPath, (string) $thumb->encode('webp', 80));
+            $thumb->fit(400, 400);
+
+            try {
+                $thumbEncoded = (string) $thumb->encode('webp', 80);
+                $thumbExt = 'webp';
+            } catch (\Throwable $e) {
+                $thumbEncoded = (string) $thumb->encode('jpg', 82)->interlace();
+                $thumbExt = 'jpg';
+            }
+
+            $thumbPath = 'photos/' . now()->format('Y/m') . '/' . $this->photo->uuid . '_thumb.' . $thumbExt;
+            Storage::disk('local')->put($thumbPath, $thumbEncoded);
             $variants['thumb'] = $thumbPath;
 
+            // Medium: maintain aspect ratio
             $md = clone $image;
-            $md->resize(1024, 1024, function ($constraint) {
+            $md->resize(1024, null, function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
             });
-            $mdPath = 'photos/' . now()->format('Y/m') . '/' . $this->photo->uuid . '_md.webp';
-            Storage::disk('local')->put($mdPath, (string) $md->encode('webp', 80));
+
+            try {
+                $mdEncoded = (string) $md->encode('webp', 80);
+                $mdExt = 'webp';
+            } catch (\Throwable $e) {
+                $mdEncoded = (string) $md->encode('jpg', 82)->interlace();
+                $mdExt = 'jpg';
+            }
+
+            $mdPath = 'photos/' . now()->format('Y/m') . '/' . $this->photo->uuid . '_md.' . $mdExt;
+            Storage::disk('local')->put($mdPath, $mdEncoded);
             $variants['md'] = $mdPath;
 
             $this->photo->update([
