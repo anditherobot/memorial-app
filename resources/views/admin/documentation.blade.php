@@ -12,7 +12,7 @@
     />
 
   <!-- Quick Navigation -->
-  <div class="p-4 bg-white border rounded">
+  <x-ui.card padding="p-4">
     <h2 class="text-lg font-medium mb-3">Quick Navigation</h2>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
       <a href="#overview" class="p-2 rounded border bg-gray-50 hover:bg-gray-100 text-center">📋 Overview</a>
@@ -24,11 +24,11 @@
       <a href="#troubleshooting" class="p-2 rounded border bg-gray-50 hover:bg-gray-100 text-center">🔧 Help</a>
       <a href="#version-info" class="p-2 rounded border bg-gray-50 hover:bg-gray-100 text-center">ℹ️ Info</a>
     </div>
-  </div>
+  </x-ui.card>
 
   <!-- App Overview -->
   <section id="overview">
-    <div class="p-4 bg-white border rounded">
+    <x-ui.card padding="p-4">
       <h2 class="text-lg font-medium mb-3">📋 App Overview</h2>
       <p class="text-gray-700 mb-4">
         This memorial website allows friends and family to honor the memory of a loved one through photos, messages, and shared memories.
@@ -53,12 +53,12 @@
           </div>
         </div>
       </div>
-    </div>
+    </x-ui.card>
   </section>
 
   <!-- Public Features -->
   <section id="public-features">
-    <div class="p-4 bg-white border rounded">
+    <x-ui.card padding="p-4">
       <h2 class="text-lg font-medium mb-3">👥 Public Features</h2>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
@@ -103,12 +103,12 @@
           </div>
         </div>
       </div>
-    </div>
+    </x-ui.card>
   </section>
 
   <!-- Admin Features -->
   <section id="admin-features">
-    <div class="p-4 bg-white border rounded">
+    <x-ui.card padding="p-4">
       <h2 class="text-lg font-medium mb-3">⚙️ Admin Features</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div class="p-3 border rounded">
@@ -138,12 +138,12 @@
           </div>
         </div>
       </div>
-    </div>
+    </x-ui.card>
   </section>
 
   <!-- Gallery Management -->
   <section id="gallery-management">
-    <div class="p-4 bg-white border rounded">
+    <x-ui.card padding="p-4">
       <h2 class="text-lg font-medium mb-3">🖼️ Gallery Management</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div class="p-3 border rounded bg-green-50">
@@ -176,12 +176,12 @@
           </div>
         </div>
       </div>
-    </div>
+    </x-ui.card>
   </section>
 
   <!-- Content Management -->
   <section id="content-management">
-    <div class="p-4 bg-white border rounded">
+    <x-ui.card padding="p-4">
       <h2 class="text-lg font-medium mb-3">📝 Content Management</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div class="p-3 border rounded">
@@ -204,12 +204,12 @@
           </div>
         </div>
       </div>
-    </div>
+    </x-ui.card>
   </section>
 
   <!-- Mobile Features -->
   <section id="mobile-features">
-    <div class="p-4 bg-white border rounded">
+    <x-ui.card padding="p-4">
       <h2 class="text-lg font-medium mb-3">📱 Mobile Features</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div class="p-3 border rounded">
@@ -239,12 +239,12 @@
           </div>
         </div>
       </div>
-    </div>
+    </x-ui.card>
   </section>
 
   <!-- Troubleshooting -->
   <section id="troubleshooting">
-    <div class="p-4 bg-white border rounded">
+    <x-ui.card padding="p-4">
       <h2 class="text-lg font-medium mb-3">🔧 Troubleshooting</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div class="p-3 border rounded bg-red-50">
@@ -274,7 +274,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </x-ui.card>
   </section>
 
   <!-- Version Info -->

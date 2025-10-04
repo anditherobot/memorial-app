@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'In Loving Memory — {{ $memorialName?->title ?: "Memorial" }}')
+@section('title', 'In Loving Memory — ' . ($memorialName?->title ?? 'Memorial'))
 
 @section('content')
     <!-- Hero Bio Section -->
@@ -124,15 +124,12 @@
                     @if (!empty($item['links']))
                         <div class="flex flex-wrap gap-3">
                             @foreach ($item['links'] as $link)
-                                <a href="{{ $link['url'] }}"
-                                   class="inline-flex items-center px-4 py-2 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors duration-200 shadow-md hover:shadow-lg"
-                                   target="_blank"
-                                   rel="noopener">
-                                    {{ $link['label'] }}
-                                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                                    </svg>
-                                </a>
+                                <x-ui.button-link href="{{ $link['url'] }}" target="_blank" rel="noopener" variant="primary" size="md">
+                                  {{ $link['label'] }}
+                                  <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                  </svg>
+                                </x-ui.button-link>
                             @endforeach
                         </div>
                     @endif

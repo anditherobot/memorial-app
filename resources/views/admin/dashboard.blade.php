@@ -15,26 +15,28 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Stats Cards -->
       <div class="lg:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+        <x-ui.card padding="p-4">
           <div class="text-sm text-gray-600 font-medium">Pending Wishes</div>
           <div class="text-3xl font-bold text-gray-900 mt-1">{{ $stats['wishes_pending'] }}</div>
-        </div>
-        <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+        </x-ui.card>
+        <x-ui.card padding="p-4">
           <div class="text-sm text-gray-600 font-medium">Total Wishes</div>
           <div class="text-3xl font-bold text-gray-900 mt-1">{{ $stats['wishes_total'] }}</div>
-        </div>
-        <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+        </x-ui.card>
+        <x-ui.card padding="p-4">
           <div class="text-sm text-gray-600 font-medium">Info Posts</div>
           <div class="text-3xl font-bold text-gray-900 mt-1">{{ $stats['posts_total'] }}</div>
-        </div>
-        <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-          <div class="text-sm text-gray-600 font-medium">Media Files</div>
-          <div class="text-3xl font-bold text-gray-900 mt-1">{{ $stats['media_total'] }}</div>
-        </div>
-      </div>
-
+        </x-ui.card>
+                <x-ui.card padding="p-4">
+                   <div class="text-sm text-gray-600 font-medium">Media Files</div>
+                   <div class="text-3xl font-bold text-gray-900 mt-1">{{ $stats['media_total'] }}</div>
+                </x-ui.card>
+                <x-ui.card padding="p-4">
+                    <a href="{{ route('admin.docs.components') }}" class="text-sm text-gray-600 font-medium">Component Docs</a>
+                </x-ui.card>
+               </div>
       <!-- Account Info Card -->
-      <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+      <x-ui.card padding="p-6">
         <h3 class="text-lg font-semibold text-gray-900 mb-4">Account</h3>
         <div class="space-y-3">
           <div>
@@ -47,16 +49,14 @@
           </div>
           <form method="POST" action="{{ route('logout') }}" class="mt-4">
             @csrf
-            <button type="submit" class="w-full px-4 py-2 bg-black text-white font-medium rounded-md hover:bg-gray-800 transition-colors">
-              Logout
-            </button>
+            <x-ui.button type="submit" class="w-full" variant="primary">Logout</x-ui.button>
           </form>
         </div>
-      </div>
+      </x-ui.card>
     </div>
 
     <!-- Recent Pictures Gallery -->
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <x-ui.card padding="p-6">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold text-gray-900">Recent Pictures</h2>
         <a href="{{ route('admin.gallery') }}" class="text-sm text-gray-600 hover:text-black transition-colors">View all →</a>
@@ -77,12 +77,12 @@
           <p>No pictures uploaded yet</p>
         </div>
       @endif
-    </div>
+    </x-ui.card>
 
     <!-- Two Column Layout: Recent Uploads & Documents -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Recent Uploads -->
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <x-ui.card padding="p-6">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-semibold text-gray-900">Recent Uploads</h2>
           <a href="{{ route('admin.gallery') }}" class="text-sm text-gray-600 hover:text-black transition-colors">View all →</a>
@@ -117,10 +117,10 @@
         @else
           <div class="text-center py-8 text-gray-500">No uploads yet</div>
         @endif
-      </div>
+      </x-ui.card>
 
       <!-- Recent Info Posts -->
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <x-ui.card padding="p-6">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-semibold text-gray-900">Recent Info Posts</h2>
           <a href="{{ route('admin.updates.index') }}" class="text-sm text-gray-600 hover:text-black transition-colors">View all →</a>
@@ -135,13 +135,9 @@
                     <p class="text-xs text-gray-500 mt-1">{{ $post->created_at->diffForHumans() }}</p>
                   </div>
                   @if($post->is_published)
-                    <span class="flex-shrink-0 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-black text-white">
-                      Published
-                    </span>
+                    <x-ui.badge variant="dark">Published</x-ui.badge>
                   @else
-                    <span class="flex-shrink-0 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-200 text-gray-800">
-                      Draft
-                    </span>
+                    <x-ui.badge variant="neutral">Draft</x-ui.badge>
                   @endif
                 </div>
               </a>
@@ -150,7 +146,7 @@
         @else
           <div class="text-center py-8 text-gray-500">No info posts yet</div>
         @endif
-      </div>
+      </x-ui.card>
     </div>
   </div>
 @endsection

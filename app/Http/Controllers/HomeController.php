@@ -7,6 +7,7 @@ use App\Models\MemorialEvent;
 use App\Models\Post;
 use App\Models\Media;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
@@ -16,22 +17,32 @@ class HomeController extends Controller
      */
     public function __invoke(Request $request)
     {
-        // Get memorial content
-        $memorialName = MemorialContent::findByType('memorial_name');
-        $biography = MemorialContent::findByType('bio');
-        $memorialDates = MemorialContent::findByType('memorial_dates');
-        $contactInfo = MemorialContent::findByType('contact_info');
+        // Get memorial content (guard against missing tables before first migration)
+        if (Schema::hasTable('memorial_content')) {
+            $memorialName = MemorialContent::findByType('memorial_name');
+            $biography = MemorialContent::findByType('bio');
+            $memorialDates = MemorialContent::findByType('memorial_dates');
+            $contactInfo = MemorialContent::findByType('contact_info');
+        } else {
+            $memorialName = null;
+            $biography = null;
+            $memorialDates = null;
+            $contactInfo = null;
+        }
 
         // Fallback bio if none configured
         $bio = $biography?->content ?: "We celebrate the life of a beloved friend, family member, and mentor. Their warmth, curiosity, and generosity touched everyone they met. This space gathers memories, photos, and updates for those who wish to pay respects and share stories.";
 
         // Get recent photos from gallery (limit to 3)
-        $galleryPhotos = Media::where('is_public', true)
-            ->whereNotNull('width')
-            ->whereNotNull('height')
-            ->latest()
-            ->limit(3)
-            ->get();
+        $galleryPhotos = collect();
+        if (Schema::hasTable('media')) {
+            $galleryPhotos = Media::where('is_public', true)
+                ->whereNotNull('width')
+                ->whereNotNull('height')
+                ->latest()
+                ->limit(3)
+                ->get();
+        }
 
         // Default photos if no gallery photos available
         $photos = [];
@@ -65,20 +76,26 @@ class HomeController extends Controller
         }
 
         // Get upcoming memorial events (limit to 3)
-        $upcomingEvents = MemorialEvent::active()
-            ->where('date', '>=', now()->startOfDay())
-            ->orderBy('date')
-            ->orderBy('time')
-            ->limit(3)
-            ->get();
+        $upcomingEvents = collect();
+        if (Schema::hasTable('memorial_events')) {
+            $upcomingEvents = MemorialEvent::active()
+                ->where('date', '>=', now()->startOfDay())
+                ->orderBy('date')
+                ->orderBy('time')
+                ->limit(3)
+                ->get();
+        }
 
         // Get recent published updates/announcements (limit to 3)
-        $recentUpdates = Post::where('is_published', true)
-            ->whereNotNull('published_at')
-            ->where('published_at', '<=', now())
-            ->orderByDesc('published_at')
-            ->limit(3)
-            ->get();
+        $recentUpdates = collect();
+        if (Schema::hasTable('posts')) {
+            $recentUpdates = Post::where('is_published', true)
+                ->whereNotNull('published_at')
+                ->where('published_at', '<=', now())
+                ->orderByDesc('published_at')
+                ->limit(3)
+                ->get();
+        }
 
         // Combine events and updates into a unified updates array
         $updates = collect();

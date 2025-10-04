@@ -15,26 +15,18 @@
     <form method="POST" action="{{ route('login.post') }}" class="space-y-3">
       @csrf
       <div>
-        <label class="block text-sm mb-1">Email</label>
-        <input type="email" name="email" value="{{ old('email') }}" required
-               class="w-full border rounded px-3 py-2 @error('email') border-red-500 @enderror" />
-        @error('email')
-          <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
-        @enderror
+        <x-ui.label for="email">Email</x-ui.label>
+        <x-ui.input name="email" type="email" :value="old('email')" required error="email" />
       </div>
       <div>
-        <label class="block text-sm mb-1">Password</label>
-        <input type="password" name="password" required
-               class="w-full border rounded px-3 py-2 @error('password') border-red-500 @enderror" />
-        @error('password')
-          <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
-        @enderror
+        <x-ui.label for="password">Password</x-ui.label>
+        <x-ui.input name="password" type="password" required error="password" />
       </div>
       <label class="inline-flex items-center gap-2 text-sm">
         <input type="checkbox" name="remember" value="1" /> Remember me
       </label>
       <div>
-        <button class="px-4 py-2 bg-gray-900 text-white rounded">Sign in</button>
+        <x-ui.button type="submit" variant="primary">Sign in</x-ui.button>
       </div>
     </form>
     <div class="mt-3 text-sm text-gray-600">
@@ -42,4 +34,3 @@
     </div>
   </div>
 @endsection
-

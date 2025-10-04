@@ -8,6 +8,7 @@
     "preview": "vite preview --port 5173 --strictPort",
     "ui:install": "playwright install",
     "ui:check": "playwright test -c ./playwright.config.ts",
+    "ui:check:remote": "playwright test -c ./playwright.remote.config.ts",
     "ui:desk": "playwright test -c ./playwright.config.ts -g desktop",
     "ui:mobile": "playwright test -c ./playwright.config.ts -g mobile",
     "ui:update": "PLAYWRIGHT_UPDATE_SNAPSHOTS=1 playwright test -c ./playwright.config.ts",

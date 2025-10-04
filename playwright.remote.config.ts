@@ -6,16 +6,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const APP_URL = process.env.APP_URL || 'http://127.0.0.1:8000';
-const PHP_BIN = process.env.PHP_BIN || 'php';
 
 export default defineConfig({
   testDir: 'tests/e2e',
   globalSetup: resolve(__dirname, './tests/e2e/global-setup.ts'),
   fullyParallel: false,
   timeout: 60_000,
-  expect: {
-    timeout: 10_000,
-  },
+  expect: { timeout: 10_000 },
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: APP_URL,
@@ -27,20 +24,10 @@ export default defineConfig({
     viewport: { width: 1280, height: 800 },
   },
   snapshotPathTemplate: '{testDir}/__screenshots__/{projectName}/{arg}{ext}',
-  webServer: {
-    command: `${PHP_BIN} artisan serve --env=testing --host=127.0.0.1 --port=8000`,
-    url: APP_URL,
-    reuseExistingServer: true,
-    timeout: 120_000,
-  },
   projects: [
     {
       name: 'chromium-desktop',
-      use: {
-        browserName: 'chromium',
-        viewport: { width: 1280, height: 800 },
-        userAgent: undefined,
-      },
+      use: { browserName: 'chromium', viewport: { width: 1280, height: 800 } },
     },
     {
       name: 'chromium-mobile',
@@ -53,3 +40,4 @@ export default defineConfig({
     },
   ],
 });
+

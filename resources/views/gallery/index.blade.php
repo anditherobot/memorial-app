@@ -24,15 +24,15 @@
       <p class="text-gray-600 mb-3">Sample gallery (no uploads yet).</p>
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" id="gallery-grid">
         @foreach(($samples ?? []) as $i => $path)
-          <div class="task-card-ui border rounded-lg overflow-hidden bg-white">
+          <x-ui.card padding="p-0">
             <a href="{{ asset($path) }}" class="glightbox" data-gallery="memorial" aria-label="Open sample image {{ $i+1 }}">
               <img src="{{ asset($path) }}" alt="Sample image {{ $i+1 }}" class="w-full h-44 object-cover bg-white" />
             </a>
             <div class="p-2 text-xs flex items-center justify-between">
               <span class="truncate text-gray-700">Sample {{ $i+1 }}</span>
-              <span class="chip bg-gray-100">SVG</span>
+              <x-ui.badge variant="neutral">SVG</x-ui.badge>
             </div>
-          </div>
+          </x-ui.card>
         @endforeach
       </div>
     @endif

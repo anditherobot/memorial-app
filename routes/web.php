@@ -97,6 +97,7 @@ Route::middleware(['auth','admin'])->prefix('admin')->group(function () {
 
     // Documentation
     Route::get('/docs', [\App\Http\Controllers\AdminDocumentationController::class, 'index'])->name('admin.docs');
+    Route::get('/docs/components', [\App\Http\Controllers\Admin\ComponentDocsController::class, 'index'])->name('admin.docs.components');
 });
 
 // Optional: Token-based moderation endpoints (no login), separate namespace to avoid route name collisions

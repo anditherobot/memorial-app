@@ -58,17 +58,17 @@
             Share a message in remembrance
           </div>
           <div class="flex items-center gap-3">
-            <a href="#share-form" class="inline-flex items-center px-4 py-2 rounded-lg border-2 border-purple-600 text-purple-700 font-medium text-sm hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <x-ui.button-link href="#share-form" variant="brand-outline" size="md">
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
               </svg>
               Post a Wish
-            </a>
+            </x-ui.button-link>
           </div>
         </div>
 
         <!-- Inline Share Form (beneath CTA) -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mt-4" id="share-form">
+        <x-ui.card class="rounded-xl shadow-sm border-gray-100 overflow-hidden mt-4" padding="p-0" id="share-form">
           <div class="bg-gradient-to-r from-purple-50 to-indigo-50 px-6 py-5 border-b border-gray-200">
             <h2 class="font-semibold text-gray-900 text-lg flex items-center">
               <svg class="w-5 h-5 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -120,7 +120,7 @@
               </button>
             </div>
           </form>
-        </div>
+        </x-ui.card>
 
         <!-- Wishes Feed -->
         <!-- Top pagination for long lists -->
@@ -141,7 +141,7 @@
                 <span class="flex-1 h-px bg-gray-200 ml-3"></span>
               </div>
             @endif
-            <article class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-200 hover:border-purple-200">
+            <x-ui.card class="rounded-xl shadow-sm border-gray-100 hover:shadow-md transition-all duration-200 hover:border-purple-200" padding="p-6">
               <div class="flex items-start gap-4">
                 <div class="relative">
                   <div class="w-14 h-14 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-full flex items-center justify-center text-white font-semibold text-lg flex-shrink-0 shadow-sm">
@@ -192,7 +192,7 @@
                   </div>
                 </div>
               </div>
-            </article>
+            </x-ui.card>
           @empty
             <div class="text-center py-16">
               <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

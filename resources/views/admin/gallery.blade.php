@@ -13,36 +13,30 @@
 
     <!-- Toast Notifications -->
     @if(session('status'))
-      <div id="successToast" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in">
-        <div class="flex items-center">
-          <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          {{ session('status') }}
-        </div>
-      </div>
+      <x-ui.alert id="successToast" variant="success" style="solid" class="fixed top-4 right-4 z-50 animate-fade-in shadow-lg">
+        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+        {{ session('status') }}
+      </x-ui.alert>
     @endif
 
     @if(session('warning'))
-      <div id="warningToast" class="fixed top-4 right-4 bg-yellow-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in">
-        <div class="flex items-center">
-          <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-          </svg>
-          {{ session('warning') }}
-        </div>
-      </div>
+      <x-ui.alert id="warningToast" variant="warning" style="solid" class="fixed top-4 right-4 z-50 animate-fade-in shadow-lg">
+        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+        </svg>
+        {{ session('warning') }}
+      </x-ui.alert>
     @endif
 
     @if(session('error'))
-      <div id="errorToast" class="fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in">
-        <div class="flex items-center">
-          <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-          {{ session('error') }}
-        </div>
-      </div>
+      <x-ui.alert id="errorToast" variant="danger" style="solid" class="fixed top-4 right-4 z-50 animate-fade-in shadow-lg">
+        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+        {{ session('error') }}
+      </x-ui.alert>
     @endif
 
     <x-upload-form :action="route('admin.gallery.upload')" />
@@ -53,7 +47,7 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           @foreach($photos as $photo)
             {{-- Note: Photo model doesn't match Media model structure, keeping old code for now --}}
-            <div class="bg-white border rounded-lg overflow-hidden">
+            <x-ui.card padding="p-0">
               <a href="{{ $photo->display_url }}" class="glightbox" data-gallery="photos">
                 <img src="{{ $photo->thumbnail_url }}"
                      alt="{{ $photo->uuid }}"
@@ -63,9 +57,9 @@
               </a>
               <div class="p-2 text-xs text-gray-700 flex items-center justify-between">
                 <span class="truncate">{{ $photo->uuid }}</span>
-                <span class="chip bg-gray-100">{{ $photo->width }}×{{ $photo->height }}</span>
+                <x-ui.badge variant="neutral">{{ $photo->width }}×{{ $photo->height }}</x-ui.badge>
               </div>
-            </div>
+            </x-ui.card>
           @endforeach
         </div>
       </div>
@@ -80,10 +74,9 @@
           <button id="selectAllBtn" type="button" onclick="toggleSelectAll()" class="text-sm text-gray-600 hover:text-gray-900">
             Select All
           </button>
-          <button id="optimizeBtn" type="button" onclick="optimizeSelected()" disabled
-                  class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+          <x-ui.button id="optimizeBtn" type="button" onclick="optimizeSelected()" variant="info" size="sm" class="disabled:bg-gray-300 disabled:cursor-not-allowed">
             <span id="optimizeBtnText">Optimize Selected</span>
-          </button>
+          </x-ui.button>
         </div>
       </div>
 
@@ -95,9 +88,7 @@
               <form method="POST" action="{{ route('admin.media.destroy', $img) }}" onsubmit="return confirm('Delete this image?')">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="w-full text-xs text-red-600 hover:text-red-800 font-medium">
-                  Delete
-                </button>
+                <x-ui.button type="submit" variant="danger" size="sm" class="w-full">Delete</x-ui.button>
               </form>
             </div>
           </x-image-thumbnail>

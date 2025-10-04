@@ -19,9 +19,8 @@
   <div class="max-w-4xl mx-auto space-y-6">
     <div class="flex items-center justify-between">
       <h1 class="text-2xl font-semibold text-gray-900">Edit Update</h1>
-      <a href="{{ route('admin.updates.index') }}" class="text-gray-600 hover:text-gray-800">← Back to Updates</a>
+      <x-ui.button-link href="{{ route('admin.updates.index') }}" variant="ghost">← Back to Updates</x-ui.button-link>
     </div>
     @include('updates.admin._form')
   </div>
 @endsection
-

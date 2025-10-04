@@ -17,7 +17,7 @@
     </div>
     <div class="space-y-4">
       @forelse($pending as $wish)
-        <article class="p-4 bg-white border rounded">
+        <x-ui.card padding="p-4">
           <div class="flex items-center justify-between">
             <div>
               <div class="font-medium">{{ $wish->name }}</div>
@@ -26,17 +26,17 @@
             <div class="space-x-2">
               <form method="POST" action="{{ route('admin.wishes.approve', $wish) }}" class="inline">
                 @csrf
-                <button class="px-3 py-1 rounded bg-green-600 text-white">Approve</button>
+                <x-ui.button type="submit" variant="info" size="sm">Approve</x-ui.button>
               </form>
               <form method="POST" action="{{ route('admin.wishes.delete', $wish) }}" class="inline" onsubmit="return confirm('Delete this wish?')">
                 @csrf
                 @method('DELETE')
-                <button class="px-3 py-1 rounded bg-red-600 text-white">Delete</button>
+                <x-ui.button type="submit" variant="danger" size="sm">Delete</x-ui.button>
               </form>
             </div>
           </div>
           <p class="mt-2">{{ $wish->message }}</p>
-        </article>
+        </x-ui.card>
       @empty
         <div class="text-gray-500">No pending wishes.</div>
       @endforelse
@@ -45,4 +45,3 @@
     {{ $pending->links() }}
   </div>
 @endsection
-

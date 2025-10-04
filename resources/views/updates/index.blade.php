@@ -20,14 +20,12 @@
       @endif
     </div>
     @if($posts->hasMorePages())
-      <button
-        id="load-more"
-        class="px-4 py-2 bg-gray-900 text-white rounded"
+      <x-ui.button id="load-more" variant="primary"
         hx-get="{{ $posts->nextPageUrl() }}"
         hx-target="#updates-list"
         hx-swap="beforeend"
         hx-trigger="click"
-      >Load more</button>
+      >Load more</x-ui.button>
     @endif
   </div>
 @endsection

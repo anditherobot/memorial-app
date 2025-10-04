@@ -16,7 +16,7 @@
         <h1 class="text-2xl font-semibold text-gray-900">Manage Updates</h1>
         <p class="text-sm text-gray-500">Memorial announcements and news</p>
       </div>
-      <a href="{{ route('admin.updates.create') }}" class="px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800 transition-colors">New Update</a>
+      <x-ui.button-link href="{{ route('admin.updates.create') }}" variant="primary">New Update</x-ui.button-link>
     </div>
 
     @if(session('status'))
@@ -50,7 +50,7 @@
             <form method="POST" action="{{ route('admin.updates.destroy', $post) }}" onsubmit="return confirm('Delete this post?')" class="inline">
               @csrf
               @method('DELETE')
-              <button class="px-3 py-1.5 border border-red-300 text-red-700 rounded text-sm hover:bg-red-50 transition-colors" onclick="event.stopPropagation()">Delete</button>
+              <x-ui.button type="submit" variant="danger" size="sm" onclick="event.stopPropagation()">Delete</x-ui.button>
             </form>
           </div>
         </div>
@@ -62,4 +62,3 @@
     <div>{{ $posts->links() }}</div>
   </div>
 @endsection
-

@@ -12,7 +12,8 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                serif: ['Crimson Text', ...defaultTheme.fontFamily.serif],
             },
             colors: {
                 'gray-850': '#1a1a1a',
@@ -34,4 +35,3 @@ export default {
         backdropFilter: false,
     },
 };
-

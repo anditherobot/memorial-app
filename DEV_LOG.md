@@ -410,3 +410,27 @@ The UI now shows:
 - Percentage savings
 - Thumbnail file size
 - Clear optimization status badge
+## 2025-10-04 — UI Design System + Playwright Alignment
+
+Summary
+- Extracted a lightweight design system (tokens + components) aligned with APP_WHITE_PAPER.md and current Tailwind setup.
+- Replaced inline layout header/footer with reusable components. Standardized buttons, badges, cards, alerts, and form inputs across public and admin views.
+- Reduced UI variance to stabilize Playwright visual snapshots on desktop and mobile.
+
+Key Changes
+- Added docs/DESIGN_SYSTEM.md with tokens, usage snippets, and Playwright guidance.
+- New Blade UI components under resources/views/components/ui/: header, footer, nav-link, button(+link), badge, card, section, breadcrumb, alert, label, input, textarea.
+- Refactored layouts/app.blade.php to use <x-ui.site-header/> and <x-ui.site-footer/>, and <x-ui.breadcrumb/>.
+- Standardized public views (home, gallery, updates, wishes) and admin views (dashboard, gallery, documentation, updates, wishes moderation, memorial content) to use components.
+- Added button variants: primary, secondary, ghost, danger, info, outline, brand-outline (purple CTA).
+- Tailwind fonts set to Inter (sans) and Crimson Text (serif).
+
+Playwright
+- Config now supports a custom PHP binary via PHP_BIN env in playwright.config.ts.
+- Added playwright.remote.config.ts and npm script ui:check:remote to target an already-running app.
+- CI already has a dedicated ui-visual.yml workflow with PHP 8.3 and npx playwright install --with-deps.
+
+Next Steps
+- Optional: Sweep remaining admin forms to use <x-ui.input>/<x-ui.textarea> fully.
+- Optional: Add an outline/brand token note to DESIGN_SYSTEM.md.
+- Run visual checks locally via Windows PowerShell by setting PHP_BIN to the Laragon PHP path, or use the remote config once a server is running.

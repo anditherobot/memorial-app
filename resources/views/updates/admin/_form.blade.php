@@ -6,23 +6,17 @@
   @endif
 
   <div>
-    <label class="block text-sm font-medium text-gray-700 mb-2">Update Title</label>
-    <input type="text" name="title" value="{{ old('title', $post->title ?? '') }}" required
-           placeholder="Enter a descriptive title for this update..."
-           class="block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-    @error('title')<div class="text-red-600 text-sm mt-1">{{ $message }}</div>@enderror
+    <x-ui.label for="title">Update Title</x-ui.label>
+    <x-ui.input name="title" :value="old('title', $post->title ?? '')" required placeholder="Enter a descriptive title for this update..." error="title" />
   </div>
 
   <div>
-    <label class="block text-sm font-medium text-gray-700 mb-2">Author</label>
-    <input type="text" name="author_name" value="{{ old('author_name', $post->author_name ?? 'Family') }}"
-           placeholder="Who is publishing this update?"
-           class="block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-    @error('author_name')<div class="text-red-600 text-sm mt-1">{{ $message }}</div>@enderror
+    <x-ui.label for="author_name">Author</x-ui.label>
+    <x-ui.input name="author_name" :value="old('author_name', $post->author_name ?? 'Family')" placeholder="Who is publishing this update?" error="author_name" />
   </div>
 
   <div>
-    <label class="block text-sm font-medium text-gray-700 mb-2">Update Content</label>
+    <x-ui.label for="editor">Update Content</x-ui.label>
     <div class="border border-gray-300 rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500">
       <div class="flex gap-1 p-2 border-b border-gray-200 bg-gray-50 text-sm">
         <button type="button" class="px-2 py-1 border border-gray-200 rounded hover:bg-white transition-colors" onclick="wrapSel('<strong>','</strong>')"><b>B</b></button>
@@ -30,9 +24,10 @@
         <button type="button" class="px-2 py-1 border border-gray-200 rounded hover:bg-white transition-colors" onclick="insertLink()">Link</button>
         <button type="button" class="px-2 py-1 border border-gray-200 rounded hover:bg-white transition-colors" onclick="wrapSel('<ul>\n<li>','</li>\n</ul>')">List</button>
       </div>
-      <textarea id="editor" name="body" rows="10"
-                placeholder="Write your update content here. You can use the formatting buttons above to add bold text, links, lists, and more..."
-                class="w-full p-3 outline-none resize-none" required>{{ old('body', $post->body ?? '') }}</textarea>
+      <x-ui.textarea id="editor" name="body" rows="10" required
+        class="w-full p-3 outline-none resize-none border-0 focus:ring-0 focus:border-transparent"
+        placeholder="Write your update content here. You can use the formatting buttons above to add bold text, links, lists, and more..."
+      >{{ old('body', $post->body ?? '') }}</x-ui.textarea>
     </div>
     @error('body')<div class="text-red-600 text-sm mt-1">{{ $message }}</div>@enderror
   </div>
@@ -67,25 +62,21 @@
           </label>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Publish date & time</label>
-            <input type="datetime-local" name="published_at"
-                   value="{{ old('published_at', optional($post->published_at ?? now())->format('Y-m-d\TH:i')) }}"
-                   class="block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+            <x-ui.label for="published_at">Publish date & time</x-ui.label>
+            <x-ui.input type="datetime-local" name="published_at" :value="old('published_at', optional($post->published_at ?? now())->format('Y-m-d\\TH:i'))" />
             <div class="text-xs text-gray-500 mt-1">Current time: {{ now()->format('Y-m-d H:i') }}</div>
           </div>
         </div>
 
-        <div class="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <div class="flex items-start gap-2">
-            <svg class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-            </svg>
-            <div class="text-xs text-blue-800">
-              <div class="font-medium">About drafts:</div>
-              Unpublished updates are saved as drafts and only visible to administrators until published.
-            </div>
+        <x-ui.alert variant="info" class="mt-3">
+          <svg class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+          </svg>
+          <div class="text-xs">
+            <div class="font-medium">About drafts:</div>
+            Unpublished updates are saved as drafts and only visible to administrators until published.
           </div>
-        </div>
+        </x-ui.alert>
       </div>
     </div>
   </div>
@@ -97,13 +88,13 @@
         <div class="text-xs mt-1">{{ $editing ? 'Your changes will be saved with the current settings above.' : 'Check your publishing settings above before creating.' }}</div>
       </div>
       <div class="flex items-center gap-3">
-        <a href="{{ route('admin.updates.index') }}" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">Cancel</a>
-        <button type="submit" class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors shadow-sm">
+        <x-ui.button-link href="{{ route('admin.updates.index') }}" variant="outline">Cancel</x-ui.button-link>
+        <x-ui.button type="submit" variant="primary" class="inline-flex items-center">
           <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
           </svg>
           {{ $editing ? 'Save Changes' : 'Create Update' }}
-        </button>
+        </x-ui.button>
       </div>
     </div>
   </div>
@@ -127,4 +118,3 @@ function insertLink() {
   wrapSel('<a href="' + url + '">','</a>');
 }
 </script>
-
