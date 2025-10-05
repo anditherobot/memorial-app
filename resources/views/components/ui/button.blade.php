@@ -20,7 +20,9 @@
     'outline' => 'bg-transparent border border-gray-300 text-gray-800 hover:bg-gray-100 focus:ring-gray-300',
     'brand-outline' => 'bg-transparent border-2 border-purple-600 text-purple-700 hover:bg-purple-50 focus:ring-purple-500',
   ];
-  $classes = trim("$base {$sizes[$size] ?? $sizes['md']} {$variants[$variant] ?? $variants['primary']}");
+  $sizeClass = $sizes[$size] ?? $sizes['md'];
+  $variantClass = $variants[$variant] ?? $variants['primary'];
+  $classes = trim("$base $sizeClass $variantClass");
 @endphp
 
 <button type="{{ $type }}" {{ $attributes->merge(['class' => $classes]) }}>

@@ -28,9 +28,12 @@
         <div class="relative">
           <a href="{{ route('admin.updates.edit', $post) }}" class="block p-4 hover:bg-gray-50 transition-colors">
             <div class="flex items-start gap-4">
-              @php $cover = $post->media()->with('derivatives')->first(); $thumb = optional($cover?->derivatives->first()); @endphp
+              @php
+                $cover = $post->media()->with('derivatives')->first();
+                $thumb = $cover?->derivatives?->first();
+              @endphp
               @if($cover)
-                <img src="{{ Storage::disk('public')->url(($thumb?->storage_path) ?? $cover->storage_path) }}" class="w-24 h-24 object-cover rounded" alt="cover" />
+                <img src="{{ Storage::disk('public')->url($thumb?->storage_path ?? $cover->storage_path) }}" class="w-24 h-24 object-cover rounded" alt="cover" />
               @else
                 <div class="w-24 h-24 bg-gray-100 rounded grid place-items-center text-gray-400 text-xs">No image</div>
               @endif

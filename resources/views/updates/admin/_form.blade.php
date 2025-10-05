@@ -38,7 +38,7 @@
       <input type="file" name="image" accept="image/*" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
       @if(!empty($cover))
         <div class="mt-3 flex items-center gap-3">
-          <img src="{{ Storage::disk('public')->url(($cover->derivatives()->where('type','thumbnail')->first()->storage_path ?? $cover->storage_path)) }}" class="w-20 h-20 object-cover rounded-lg border" />
+          <img src="{{ Storage::disk('public')->url($cover->derivatives()->where('type','thumbnail')->first()?->storage_path ?? $cover->storage_path) }}" class="w-20 h-20 object-cover rounded-lg border" />
           <label class="inline-flex items-center gap-2 text-sm text-gray-600">
             <input type="checkbox" name="remove_image" value="1" class="rounded border-gray-300 text-red-600 focus:ring-red-500" />
             Remove current image

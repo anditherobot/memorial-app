@@ -20,7 +20,8 @@
     'danger' => 'bg-red-600 text-white border-red-700',
   ];
   $palette = $style === 'solid' ? $solid : $soft;
-  $classes = trim("$base {$palette[$variant] ?? $palette['neutral']}");
+  $variantClass = $palette[$variant] ?? $palette['neutral'];
+  $classes = trim("$base $variantClass");
 @endphp
 
 <div {{ $attributes->merge(['class' => $classes]) }}>

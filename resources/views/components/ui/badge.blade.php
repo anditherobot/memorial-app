@@ -12,7 +12,8 @@
     'danger' => 'bg-red-100 text-red-800',
     'dark' => 'bg-black text-white',
   ];
-  $classes = trim("$base {$variants[$variant] ?? $variants['neutral']}");
+  $variantClass = $variants[$variant] ?? $variants['neutral'];
+  $classes = trim("$base $variantClass");
 @endphp
 
 <span {{ $attributes->merge(['class' => $classes]) }}>

@@ -1,9 +1,12 @@
 @php use Illuminate\Support\Str; @endphp
 @foreach($posts as $post)
-  @php $cover = $post->media()->with('derivatives')->first(); $thumb = optional($cover?->derivatives->first()); @endphp
+  @php
+    $cover = $post->media()->with('derivatives')->first();
+    $thumb = $cover?->derivatives?->first();
+  @endphp
   <article class="update-card border rounded-lg p-4 flex gap-4">
     @if($cover)
-      <img src="{{ Storage::disk('public')->url(($thumb?->storage_path) ?? $cover->storage_path) }}" class="w-28 h-28 object-cover rounded" alt="cover" />
+      <img src="{{ Storage::disk('public')->url($thumb?->storage_path ?? $cover->storage_path) }}" class="w-28 h-28 object-cover rounded" alt="cover" />
     @endif
     <a href="{{ route('updates.show', $post) }}" class="block flex-1">
       <h2 class="text-lg font-semibold">{{ $post->title }}</h2>

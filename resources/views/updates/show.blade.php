@@ -27,15 +27,18 @@
         @endif
       </div>
 
-    @php $cover = $post->media()->with('derivatives')->first(); $thumb = optional($cover?->derivatives->first()); @endphp
+    @php
+      $cover = $post->media()->with('derivatives')->first();
+      $thumb = $cover?->derivatives?->first();
+    @endphp
     @if($cover)
         @if($cover->width >= $cover->height) {{-- Landscape or Square --}}
             <div class="aspect-w-16 aspect-h-9 rounded-lg border overflow-hidden">
-                <img src="{{ Storage::disk('public')->url(($thumb?->storage_path) ?? $cover->storage_path) }}" class="w-full h-full object-cover" alt="cover" />
+                <img src="{{ Storage::disk('public')->url($thumb?->storage_path ?? $cover->storage_path) }}" class="w-full h-full object-cover" alt="cover" />
             </div>
         @else {{-- Portrait --}}
             <div class="max-w-md mx-auto rounded-lg border overflow-hidden">
-                <img src="{{ Storage::disk('public')->url(($thumb?->storage_path) ?? $cover->storage_path) }}" class="w-full h-auto" alt="cover" />
+                <img src="{{ Storage::disk('public')->url($thumb?->storage_path ?? $cover->storage_path) }}" class="w-full h-auto" alt="cover" />
             </div>
         @endif
     @endif
